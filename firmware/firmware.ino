@@ -37,15 +37,7 @@ void setup() {
     // reserve 200 bytes for the inputString:
     inputString.reserve(200);
 
-    pinMode(DATAOUT, OUTPUT);
-    pinMode(DATAIN, INPUT);
-    pinMode(SPICLOCK,OUTPUT);
-    pinMode(SS,OUTPUT);
-
-    digitalWrite(DATAOUT,LOW);
-    digitalWrite(SPICLOCK,LOW);
-    digitalWrite(SS,HIGH); //disable device
-    delayMicroseconds(1);
+    SPISetup();
     myTransfer(0x09, "Enable 4-wire mode data read");
 }
 

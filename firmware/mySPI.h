@@ -16,7 +16,6 @@
   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #ifndef SPI_H
 #define SPI_H
 
@@ -26,6 +25,18 @@
 #define DATAIN  12 //MISO
 #define SPICLOCK 13 //sck
 #define SS 10
+
+void SPISetup() {
+    pinMode(DATAOUT, OUTPUT);
+    pinMode(DATAIN, INPUT);
+    pinMode(SPICLOCK,OUTPUT);
+    pinMode(SS,OUTPUT);
+
+    digitalWrite(DATAOUT,LOW);
+    digitalWrite(SPICLOCK,LOW);
+    digitalWrite(SS,HIGH); //disable device
+    delayMicroseconds(1);
+}
 
 void transfer_bit(boolean b) {
 #ifdef SERIALDEBUG
