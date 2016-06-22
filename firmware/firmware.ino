@@ -27,7 +27,7 @@ void printIden() {
 }
 
 void myTransfer(uint8_t b, const char* debugMsg=NULL) {
-    transfer_byte(b,debugMsg);
+    byteShiftOut(b,debugMsg);
 }
 
 void setup() {
@@ -63,7 +63,7 @@ void readFirmware() {
 #ifdef SERIALDEBUG
         Serial.println();
 #endif
-        uint16_t val = read_word();
+        uint16_t val = wordShiftIn();
 #ifdef SERIALDEBUG
         Serial.print("addr=");
         PrintHex16(&addr,1);

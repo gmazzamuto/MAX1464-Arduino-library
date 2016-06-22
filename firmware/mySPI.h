@@ -38,7 +38,7 @@ void SPISetup() {
     delayMicroseconds(1);
 }
 
-void transfer_bit(boolean b) {
+void bitOut(boolean b) {
 #ifdef SERIALDEBUG
     if(b)
         Serial.print('1');
@@ -53,7 +53,7 @@ void transfer_bit(boolean b) {
     delayMicroseconds(1);
 }
 
-void transfer_byte(byte b, const char* debugMsg = NULL) {
+void byteShiftOut(byte b, const char* debugMsg = NULL) {
     digitalWrite(SS, LOW);
     delayMicroseconds(1);
 #ifdef SERIALDEBUG
@@ -65,7 +65,7 @@ void transfer_byte(byte b, const char* debugMsg = NULL) {
         if(i==4)
             Serial.print(" ");
 #endif
-        transfer_bit(b & (1<<i));
+        bitOut(b & (1<<i));
     }
 #ifdef SERIALDEBUG
     if(debugMsg == NULL)
@@ -76,7 +76,7 @@ void transfer_byte(byte b, const char* debugMsg = NULL) {
     delayMicroseconds(1);
 }
 
-boolean read_bit() {
+boolean bitIn() {
     digitalWrite(SPICLOCK,HIGH);
     delayMicroseconds(1);
     boolean in = digitalRead(DATAIN);
@@ -91,7 +91,7 @@ boolean read_bit() {
     return in;
 }
 
-uint16_t read_word() {
+uint16_t wordShiftIn() {
     digitalWrite(SS, LOW);
     delayMicroseconds(1);
     uint16_t w = 0;
@@ -99,7 +99,7 @@ uint16_t read_word() {
     Serial.print("rx word: ");
 #endif
     for(int i=15;i>=0;i--) {
-        w |= (read_bit() << i);
+        w |= (bitIn() << i);
 #ifdef SERIALDEBUG
     if(i%4 == 0)
         Serial.print(" ");
