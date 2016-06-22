@@ -16,116 +16,11 @@
   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define DATAOUT 11//MOSI
-#define DATAIN  12//MISO
-#define SPICLOCK  13//sck
-
 #define SERIALDEBUG
-
-void transfer_bit(boolean b) {
-    #ifdef SERIALDEBUG
-    if(b)
-    Serial.print('1');
-    else
-    Serial.print('0');
-    #endif
-    digitalWrite(DATAOUT,b);
-    delayMicroseconds(1);
-    digitalWrite(SPICLOCK,HIGH);
-    delayMicroseconds(1);
-    digitalWrite(SPICLOCK,LOW);
-    delayMicroseconds(1);
-}
-
-void transfer_byte(byte b, const char* debugMsg = NULL) {
-    digitalWrite(SS, LOW);
-    delayMicroseconds(1);
-    #ifdef SERIALDEBUG
-    Serial.print("tx byte: ");
-    PrintHex8(&b,1);
-    #endif
-    for(int i=0;i<8;i++) {
-        #ifdef SERIALDEBUG
-        if(i==4)
-        Serial.print(" ");
-        #endif
-        transfer_bit(b & (1<<i));
-    }
-    #ifdef SERIALDEBUG
-    if(debugMsg == NULL)
-    debugMsg = "";
-    Serial.println(String(" //") + debugMsg);
-    #endif
-    digitalWrite(SS, HIGH);
-    delayMicroseconds(1);
-}
-
-boolean read_bit() {
-    digitalWrite(SPICLOCK,HIGH);
-    delayMicroseconds(1);
-    boolean in = digitalRead(DATAIN);
-    #ifdef SERIALDEBUG
-    if(in)
-    Serial.print('1');
-    else
-    Serial.print('0');
-    #endif
-    digitalWrite(SPICLOCK,LOW);
-    delayMicroseconds(1);
-    return in;
-}
-
-uint16_t read_word() {
-    digitalWrite(SS, LOW);
-    delayMicroseconds(1);
-    uint16_t w = 0;
-    #ifdef SERIALDEBUG
-    Serial.print("rx word: ");
-    #endif
-    for(int i=15;i>=0;i--) {
-        w |= (read_bit() << i);
-        #ifdef SERIALDEBUG
-        if(i%4 == 0)
-        Serial.print(" ");
-        #endif
-    }
-    #ifdef SERIALDEBUG
-    Serial.print(" -> ");
-    PrintHex16(&w,1);
-    Serial.println();
-    #endif
-    digitalWrite(SS, HIGH);
-    delayMicroseconds(1);
-    return w;
-}
-
-#define SS 10
+#include "mySPI.h"
 
 String inputString = "";         // a string to hold incoming data
 boolean stringComplete = false;  // whether the string is complete
-
-void PrintHex8(uint8_t *data, uint8_t length) // prints 8-bit data in hex with leading zeroes
-{
-    Serial.print("0x");
-    for (int i=0; i<length; i++) {
-        if (data[i]<0x10) {Serial.print("0");}
-        Serial.print(data[i],HEX);
-        Serial.print(" ");
-    }
-}
-
-void PrintHex16(uint16_t *data, uint8_t length) // prints 16-bit data in hex with leading zeroes
-{
-    Serial.print("0x");
-    for (int i=0; i<length; i++)
-    {
-        uint8_t MSB=byte(data[i]>>8);
-        uint8_t LSB=byte(data[i]);
-
-        if (MSB<0x10) {Serial.print("0");} Serial.print(MSB,HEX); Serial.print(" ");
-        if (LSB<0x10) {Serial.print("0");} Serial.print(LSB,HEX); Serial.print(" ");
-    }
-}
 
 void printIden() {
     Serial.println("Arduino MAX1464 Serial Terminal");
