@@ -16,7 +16,7 @@
   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define SERIALDEBUG
+// #define SERIALDEBUG
 #include "mySPI.h"
 
 String inputString = "";         // a string to hold incoming data
@@ -31,9 +31,6 @@ void myTransfer(uint8_t b, const char* debugMsg=NULL) {
 }
 
 void setup() {
-    // initialize SPI:
-    //  SPI.begin();
-
     // initialize serial:
     Serial.begin(115200);
     printIden();
@@ -54,9 +51,10 @@ void setup() {
 
 void readFirmware() {
     uint8_t b;
-    b = 0x78;
-    myTransfer(b, "reset CPU"); //reset CPU
+    myTransfer(0x78, "reset CPU"); //reset CPU
+#ifdef SERIALDEBUG
     Serial.println();
+#endif
     for(uint16_t addr=0; addr<1; addr++) {
         // set address
         myTransfer(0x07);
@@ -66,15 +64,21 @@ void readFirmware() {
             b = (msNibble << 4) | 6 + (i-2);
             myTransfer(b, String(String("write address to be read to PFAR:") + String("0x") + String(addr,HEX)).c_str());
         }
+#ifdef SERIALDEBUG
         Serial.println();
+#endif
         myTransfer(0x38,"copying FLASH to DHR");
+#ifdef SERIALDEBUG
         Serial.println();
-        uint16_t val = read_word(); //read
+#endif
+        uint16_t val = read_word();
+#ifdef SERIALDEBUG
         Serial.print("addr=");
         PrintHex16(&addr,1);
         Serial.print(" -> ");
         PrintHex16(&val,1);
         Serial.println('--------------');
+#endif
     }
 }
 

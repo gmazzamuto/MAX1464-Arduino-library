@@ -28,12 +28,12 @@
 #define SS 10
 
 void transfer_bit(boolean b) {
-    #ifdef SERIALDEBUG
+#ifdef SERIALDEBUG
     if(b)
-    Serial.print('1');
+        Serial.print('1');
     else
-    Serial.print('0');
-    #endif
+        Serial.print('0');
+#endif
     digitalWrite(DATAOUT,b);
     delayMicroseconds(1);
     digitalWrite(SPICLOCK,HIGH);
@@ -45,22 +45,22 @@ void transfer_bit(boolean b) {
 void transfer_byte(byte b, const char* debugMsg = NULL) {
     digitalWrite(SS, LOW);
     delayMicroseconds(1);
-    #ifdef SERIALDEBUG
+#ifdef SERIALDEBUG
     Serial.print("tx byte: ");
     PrintHex8(&b,1);
-    #endif
+#endif
     for(int i=0;i<8;i++) {
-        #ifdef SERIALDEBUG
+#ifdef SERIALDEBUG
         if(i==4)
-        Serial.print(" ");
-        #endif
+            Serial.print(" ");
+#endif
         transfer_bit(b & (1<<i));
     }
-    #ifdef SERIALDEBUG
+#ifdef SERIALDEBUG
     if(debugMsg == NULL)
-    debugMsg = "";
+        debugMsg = "";
     Serial.println(String(" //") + debugMsg);
-    #endif
+#endif
     digitalWrite(SS, HIGH);
     delayMicroseconds(1);
 }
@@ -69,12 +69,12 @@ boolean read_bit() {
     digitalWrite(SPICLOCK,HIGH);
     delayMicroseconds(1);
     boolean in = digitalRead(DATAIN);
-    #ifdef SERIALDEBUG
+#ifdef SERIALDEBUG
     if(in)
-    Serial.print('1');
+        Serial.print('1');
     else
-    Serial.print('0');
-    #endif
+        Serial.print('0');
+#endif
     digitalWrite(SPICLOCK,LOW);
     delayMicroseconds(1);
     return in;
@@ -84,21 +84,21 @@ uint16_t read_word() {
     digitalWrite(SS, LOW);
     delayMicroseconds(1);
     uint16_t w = 0;
-    #ifdef SERIALDEBUG
+#ifdef SERIALDEBUG
     Serial.print("rx word: ");
-    #endif
+#endif
     for(int i=15;i>=0;i--) {
         w |= (read_bit() << i);
-        #ifdef SERIALDEBUG
-        if(i%4 == 0)
+#ifdef SERIALDEBUG
+    if(i%4 == 0)
         Serial.print(" ");
-        #endif
+#endif
     }
-    #ifdef SERIALDEBUG
+#ifdef SERIALDEBUG
     Serial.print(" -> ");
     PrintHex16(&w,1);
     Serial.println();
-    #endif
+#endif
     digitalWrite(SS, HIGH);
     delayMicroseconds(1);
     return w;
