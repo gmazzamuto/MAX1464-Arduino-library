@@ -21,6 +21,7 @@
 
 String inputString = "";         // a string to hold incoming data
 boolean stringComplete = false;  // whether the string is complete
+boolean writingToFlash = false;  // whether we are currently writing to MAX1464 flash memory
 MAX1464 maxim;
 
 void printIden() {
@@ -60,10 +61,24 @@ void serialEvent() {
     }
 }
 
+void writeToFlashMemory() {
+
+}
+
 void loop() {
     if (stringComplete) {
         inputString.toUpperCase();
-        if(String("IDEN").startsWith(inputString)) {
+        if(writingToFlash) {
+            if(String("!ENDWRITEFLASHMEMORY!").equals(inputString)) {
+                writingToFlash = false;
+                Serial.println("End writing to flash memory...");
+            }
+            else if(!maxim.writeToFlashMemory(inputString))
+                Serial.println("Illegal line");
+            else
+                Serial.print(".");
+        }
+        else if(String("IDEN").startsWith(inputString)) {
             printIden();
         }
         else if(String("RFW").startsWith(inputString)) {
@@ -76,6 +91,11 @@ void loop() {
         else if(String("!ERASEFLASHMEMORY!").equals(inputString)) {
             Serial.println("Erasing FLASH memory");
             maxim.eraseFlashMemory();
+        }
+        else if(String("!WRITEFLASHMEMORY!").equals(inputString)) {
+            writingToFlash = true;
+            maxim.startWritingToFlashMemory();
+            Serial.println("Writing to flash memory...");
         }
         else {
             Serial.print("Unknown input string: ");

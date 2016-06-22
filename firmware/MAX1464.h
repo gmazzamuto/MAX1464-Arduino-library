@@ -32,7 +32,11 @@ public:
     void enable4WireModeDataTransfer();
     void eraseFlashMemory();
     void setFlashAddress(uint16_t addr);
+    void writeToDHR(uint16_t value);
     void copyFlashToDHR();
+
+    void startWritingToFlashMemory();
+    boolean writeToFlashMemory(const String hexline);
 };
 
 #endif // MAX1464_H

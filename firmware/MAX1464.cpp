@@ -93,6 +93,25 @@ void MAX1464::setFlashAddress(uint16_t addr)
 #endif
 }
 
+void MAX1464::writeToDHR(uint16_t value)
+{
+    const char *debugMsg = NULL;
+#ifdef SERIALDEBUG
+    debugMsg = "write to DHR";
+#endif
+    uint8_t b;
+    byteShiftOut(0x07, debugMsg);
+    for(int i=3;i>=0;i--){
+        byte msNibble;
+        msNibble = (value >> (8*i)) & 0xff;
+        b = (msNibble << 4) | i;
+        byteShiftOut(b, debugMsg);
+    }
+#ifdef SERIALDEBUG
+    Serial.println();
+#endif
+}
+
 void MAX1464::copyFlashToDHR()
 {
     const char *debugMsg = NULL;
@@ -103,4 +122,28 @@ void MAX1464::copyFlashToDHR()
 #ifdef SERIALDEBUG
     Serial.println();
 #endif
+}
+
+void MAX1464::startWritingToFlashMemory()
+{
+// see datasheet, page 21
+    writeToDHR(0x0000);
+    byteShiftOut(0xd4);
+    byteShiftOut(0x08);
+
+    writeToDHR(0x0031);
+    byteShiftOut(0xe4);
+    byteShiftOut(0x08);
+
+    writeToDHR(0x8000);
+    byteShiftOut(0xf4);
+    byteShiftOut(0x08);
+}
+
+
+boolean MAX1464::writeToFlashMemory(const String hexline)
+{
+    if(hexline.charAt(0) != ':')
+        return false;
+    return true;
 }
