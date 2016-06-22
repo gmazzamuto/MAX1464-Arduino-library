@@ -16,29 +16,22 @@
   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SPI_H
-#define SPI_H
-
 #include "printhex.h"
+#include "MySPI.h"
 
-#define DATAOUT 11 //MOSI
-#define DATAIN  12 //MISO
-#define SPICLOCK 13 //sck
-#define SS 10
-
-void SPISetup() {
+void MySPI::SPISetup() {
     pinMode(DATAOUT, OUTPUT);
     pinMode(DATAIN, INPUT);
     pinMode(SPICLOCK,OUTPUT);
-    pinMode(SS,OUTPUT);
+    pinMode(chipSelect,OUTPUT);
 
     digitalWrite(DATAOUT,LOW);
     digitalWrite(SPICLOCK,LOW);
-    digitalWrite(SS,HIGH); //disable device
+    digitalWrite(chipSelect,HIGH); //disable device
     delayMicroseconds(1);
 }
 
-void bitOut(boolean b) {
+void MySPI::bitOut(boolean b) {
 #ifdef SERIALDEBUG
     if(b)
         Serial.print('1');
@@ -53,12 +46,12 @@ void bitOut(boolean b) {
     delayMicroseconds(1);
 }
 
-void byteShiftOut(byte b, const char* debugMsg = NULL) {
-    digitalWrite(SS, LOW);
+void MySPI::byteShiftOut(byte b, const char* debugMsg) {
+    digitalWrite(chipSelect, LOW);
     delayMicroseconds(1);
 #ifdef SERIALDEBUG
     Serial.print("tx byte: ");
-    PrintHex8(&b,1);
+    PrintHex::PrintHex8(&b,1);
 #endif
     for(int i=0;i<8;i++) {
 #ifdef SERIALDEBUG
@@ -72,11 +65,11 @@ void byteShiftOut(byte b, const char* debugMsg = NULL) {
         debugMsg = "";
     Serial.println(String(" //") + debugMsg);
 #endif
-    digitalWrite(SS, HIGH);
+    digitalWrite(chipSelect, HIGH);
     delayMicroseconds(1);
 }
 
-boolean bitIn() {
+boolean MySPI::bitIn() {
     digitalWrite(SPICLOCK,HIGH);
     delayMicroseconds(1);
     boolean in = digitalRead(DATAIN);
@@ -91,8 +84,8 @@ boolean bitIn() {
     return in;
 }
 
-uint16_t wordShiftIn() {
-    digitalWrite(SS, LOW);
+uint16_t MySPI::wordShiftIn() {
+    digitalWrite(chipSelect, LOW);
     delayMicroseconds(1);
     uint16_t w = 0;
 #ifdef SERIALDEBUG
@@ -107,12 +100,10 @@ uint16_t wordShiftIn() {
     }
 #ifdef SERIALDEBUG
     Serial.print(" -> ");
-    PrintHex16(&w,1);
+    PrintHex::PrintHex16(&w,1);
     Serial.println();
 #endif
-    digitalWrite(SS, HIGH);
+    digitalWrite(chipSelect, HIGH);
     delayMicroseconds(1);
     return w;
 }
-
-#endif // SPI_H

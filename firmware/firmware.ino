@@ -16,18 +16,19 @@
   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-// #define SERIALDEBUG
-#include "mySPI.h"
+#include "printhex.h"
+#include "MySPI.h"
 
 String inputString = "";         // a string to hold incoming data
 boolean stringComplete = false;  // whether the string is complete
+MySPI spi;
 
 void printIden() {
     Serial.println("Arduino MAX1464 Serial Terminal");
 }
 
 void myTransfer(uint8_t b, const char* debugMsg=NULL) {
-    byteShiftOut(b,debugMsg);
+    spi.byteShiftOut(b,debugMsg);
 }
 
 void setup() {
@@ -37,7 +38,7 @@ void setup() {
     // reserve 200 bytes for the inputString:
     inputString.reserve(200);
 
-    SPISetup();
+    spi.SPISetup();
     myTransfer(0x09, "Enable 4-wire mode data read");
 }
 
@@ -63,12 +64,12 @@ void readFirmware() {
 #ifdef SERIALDEBUG
         Serial.println();
 #endif
-        uint16_t val = wordShiftIn();
+        uint16_t val = spi.wordShiftIn();
 #ifdef SERIALDEBUG
         Serial.print("addr=");
-        PrintHex16(&addr,1);
+        PrintHex::PrintHex16(&addr,1);
         Serial.print(" -> ");
-        PrintHex16(&val,1);
+        PrintHex::PrintHex16(&val,1);
         Serial.println('--------------');
 #endif
     }
