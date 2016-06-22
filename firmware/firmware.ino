@@ -1,0 +1,71 @@
+/*
+  MAX1464 library for Arduino
+  Copyright (C) 2016 Giacomo Mazzamuto <gmazzamuto@gmail.com>
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+String inputString = "";         // a string to hold incoming data
+boolean stringComplete = false;  // whether the string is complete
+
+void printIden() {
+    Serial.println("Arduino MAX1464 Serial Terminal");
+}
+
+void setup() {
+  // initialize serial:
+  Serial.begin(115200);
+  printIden();
+  // reserve 200 bytes for the inputString:
+  inputString.reserve(200);
+}
+
+/*
+  SerialEvent occurs whenever a new data comes in the
+ hardware serial RX.  This routine is run between each
+ time loop() runs, so using delay inside loop can delay
+ response.  Multiple bytes of data may be available.
+ */
+void serialEvent() {
+  while (Serial.available()) {
+    // get the new byte:
+    char inChar = (char)Serial.read();
+    // if the incoming character is a newline, set a flag
+    // so the main loop can do something about it:
+    if (inChar == '\n') {
+      stringComplete = true;
+    }
+    else {
+      // add it to the inputString:
+      inputString += inChar;
+    }
+  }
+}
+
+void loop() {
+  if (stringComplete) {
+    inputString.toUpperCase();
+    if(String("IDEN").startsWith(inputString)) {
+      printIden();
+    }
+    else {
+      Serial.print("Unknown input string: ");
+      Serial.println(inputString);
+    }
+
+ // clear the string:
+    inputString = "";
+    stringComplete = false;
+  }
+}
