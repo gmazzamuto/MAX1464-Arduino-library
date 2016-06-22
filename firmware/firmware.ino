@@ -17,18 +17,14 @@
 */
 
 #include "printhex.h"
-#include "MySPI.h"
+#include "MAX1464.h"
 
 String inputString = "";         // a string to hold incoming data
 boolean stringComplete = false;  // whether the string is complete
-MySPI spi;
+MAX1464 maxim;
 
 void printIden() {
     Serial.println("Arduino MAX1464 Serial Terminal");
-}
-
-void myTransfer(uint8_t b, const char* debugMsg=NULL) {
-    spi.byteShiftOut(b,debugMsg);
 }
 
 void setup() {
@@ -38,56 +34,8 @@ void setup() {
     // reserve 200 bytes for the inputString:
     inputString.reserve(200);
 
-    spi.SPISetup();
-    myTransfer(0x09, "Enable 4-wire mode data read");
-}
-
-void readFirmware() {
-    uint8_t b;
-    myTransfer(0x78, "reset CPU"); //reset CPU
-#ifdef SERIALDEBUG
-    Serial.println();
-#endif
-    for(uint16_t addr=0; addr<1; addr++) {
-        // set address
-        myTransfer(0x07);
-        for(int i=2;i>=0;i--){
-            byte msNibble;
-            msNibble = (addr >> (8*i)) & 0xff;
-            b = (msNibble << 4) | 6 + (i-2);
-            myTransfer(b, String(String("write address to be read to PFAR:") + String("0x") + String(addr,HEX)).c_str());
-        }
-#ifdef SERIALDEBUG
-        Serial.println();
-#endif
-        myTransfer(0x38,"copying FLASH to DHR");
-#ifdef SERIALDEBUG
-        Serial.println();
-#endif
-        uint16_t val = spi.wordShiftIn();
-#ifdef SERIALDEBUG
-        Serial.print("addr=");
-        PrintHex::PrintHex16(&addr,1);
-        Serial.print(" -> ");
-        PrintHex::PrintHex16(&val,1);
-        Serial.println('--------------');
-#endif
-    }
-}
-
-void haltCPU() {
-    Serial.println("Halting CPU");
-    myTransfer(0x78);
-}
-
-void flashFirmware() {
-
-}
-
-void eraseFlashMemory() {
-    Serial.println("Erasing FLASH memory");
-    myTransfer(0x78);
-    myTransfer(0xe8);
+    maxim.SPISetup();
+    maxim.enable4WireModeDataTransfer();
 }
 
 /*
@@ -119,13 +67,15 @@ void loop() {
             printIden();
         }
         else if(String("RFW").startsWith(inputString)) {
-            readFirmware();
+            maxim.readFirmware();
         }
         else if(String("HALTCPU").startsWith(inputString)) {
-            haltCPU();
+            Serial.println("Halting CPU");
+            maxim.haltCPU();
         }
         else if(String("!ERASEFLASHMEMORY!").equals(inputString)) {
-            eraseFlashMemory();
+            Serial.println("Erasing FLASH memory");
+            maxim.eraseFlashMemory();
         }
         else {
             Serial.print("Unknown input string: ");

@@ -16,33 +16,21 @@
   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef MYSPI_H
-#define MYSPI_H
-//#define SERIALDEBUG
-
-#define DATAOUT 11 //MOSI
-#define DATAIN  12 //MISO
-#define SPICLOCK 13 //sck
-#define SS 10
+#ifndef MAX1464_H
+#define MAX1464_H
 
 #include <Arduino.h>
 
-class MySPI {
+#include "MySPI.h"
+
+class MAX1464 : public MySPI
+{
 public:
-    MySPI() { chipSelect = SS; }
-    void setChipSelect(unsigned int cs) { chipSelect = cs; }
-    void SPISetup();
-
-protected:
-    void bitOut(boolean b);
-    void byteShiftOut(byte b, const char *debugMsg = NULL);
-    boolean bitIn();
-    uint16_t wordShiftIn();
-
-private:
-    unsigned int chipSelect;
+    MAX1464();
+    void readFirmware();
+    void haltCPU();
+    void enable4WireModeDataTransfer();
+    void eraseFlashMemory();
 };
 
-
-
-#endif // MYSPI_H
+#endif // MAX1464_H
