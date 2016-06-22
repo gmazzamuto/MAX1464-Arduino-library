@@ -31,6 +31,8 @@ public:
     void haltCPU();
     void enable4WireModeDataTransfer();
     void eraseFlashMemory();
+    void setFlashAddress(uint16_t addr);
+    void copyFlashToDHR();
 };
 
 #endif // MAX1464_H

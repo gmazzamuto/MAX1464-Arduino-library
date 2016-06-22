@@ -26,27 +26,15 @@ MAX1464::MAX1464() :
 }
 
 void MAX1464::readFirmware() {
-    uint8_t b;
     haltCPU();
 #ifdef SERIALDEBUG
     Serial.println();
 #endif
     for(uint16_t addr=0; addr<1; addr++) {
         // set address
-        byteShiftOut(0x07);
-        for(int i=2;i>=0;i--){
-            byte msNibble;
-            msNibble = (addr >> (8*i)) & 0xff;
-            b = (msNibble << 4) | 6 + (i-2);
-            byteShiftOut(b, String(String("write address to be read to PFAR:") + String("0x") + String(addr,HEX)).c_str());
-        }
-#ifdef SERIALDEBUG
-        Serial.println();
-#endif
-        byteShiftOut(0x38,"copying FLASH to DHR");
-#ifdef SERIALDEBUG
-        Serial.println();
-#endif
+        setFlashAddress(addr);
+        copyFlashToDHR();
+
         uint16_t val = wordShiftIn();
 #ifdef SERIALDEBUG
         Serial.print("addr=");
@@ -84,4 +72,35 @@ void MAX1464::eraseFlashMemory()
 #endif
     haltCPU();
     byteShiftOut(0xe8, debugMsg);
+}
+
+void MAX1464::setFlashAddress(uint16_t addr)
+{
+    const char *debugMsg = NULL;
+#ifdef SERIALDEBUG
+    debugMsg = "write address to PFAR";
+#endif
+    uint8_t b;
+    byteShiftOut(0x07, debugMsg);
+    for(int i=2;i>=0;i--){
+        byte msNibble;
+        msNibble = (addr >> (8*i)) & 0xff;
+        b = (msNibble << 4) | (6 + (i-2));
+        byteShiftOut(b, debugMsg);
+    }
+#ifdef SERIALDEBUG
+    Serial.println();
+#endif
+}
+
+void MAX1464::copyFlashToDHR()
+{
+    const char *debugMsg = NULL;
+#ifdef SERIALDEBUG
+    debugMsg = "copy FLASH to DHR";
+#endif
+    byteShiftOut(0x38,debugMsg);
+#ifdef SERIALDEBUG
+    Serial.println();
+#endif
 }
