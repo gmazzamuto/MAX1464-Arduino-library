@@ -100,7 +100,6 @@ void MAX1464::writeToDHR(uint16_t value)
     debugMsg = "write to DHR";
 #endif
     uint8_t b;
-    byteShiftOut(0x07, debugMsg);
     for(int i=3;i>=0;i--){
         byte msNibble;
         msNibble = (value >> (8*i)) & 0xff;
