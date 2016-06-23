@@ -217,8 +217,10 @@ boolean MAX1464::writeHexLineToFlashMemory(const String hexline)
         PrintHex::PrintHex16(&sum,1);
         return false;
     }
-    if(recordType == 0x01) //end of file
+    if(recordType == 0x01) { //end of file
+        resetCPU();
         return true;
+    }
     if(recordType != 0x0) {
         Serial.println("Wrong recordType");
         return false;
