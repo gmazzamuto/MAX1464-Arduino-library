@@ -22,6 +22,7 @@
 String inputString = "";         // a string to hold incoming data
 boolean stringComplete = false;  // whether the string is complete
 boolean writingToFlash = false;  // whether we are currently writing to MAX1464 flash memory
+unsigned long flashLinesWritten = 0; // count hex lines during flash loop
 MAX1464 maxim;
 
 void printIden() {
@@ -71,12 +72,20 @@ void loop() {
         if(writingToFlash) {
             if(String("!ENDWRITEFLASHMEMORY!").equals(inputString)) {
                 writingToFlash = false;
-                Serial.println("End writing to flash memory...");
+                Serial.println("\nEnd writing to flash memory...");
             }
-            else if(!maxim.writeToFlashMemory(inputString))
-                Serial.println("Illegal line");
-            else
+            else if(!maxim.writeHexLineToFlashMemory(inputString)) {
+                Serial.print("\nIllegal line ");
+                Serial.println(inputString);
+            }
+            else {
                 Serial.print(".");
+                flashLinesWritten++;
+                if(flashLinesWritten>80) {
+                    flashLinesWritten = 0;
+                    Serial.println();
+                }
+            }
         }
         else if(String("IDEN").startsWith(inputString)) {
             printIden();
@@ -94,6 +103,7 @@ void loop() {
         }
         else if(String("!WRITEFLASHMEMORY!").equals(inputString)) {
             writingToFlash = true;
+            flashLinesWritten = 0;
             maxim.startWritingToFlashMemory();
             Serial.println("Writing to flash memory...");
         }

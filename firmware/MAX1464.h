@@ -29,14 +29,17 @@ public:
     MAX1464();
     void readFirmware();
     void haltCPU();
+    void writeCommand();
     void enable4WireModeDataTransfer();
     void eraseFlashMemory();
     void setFlashAddress(uint16_t addr);
-    void writeToDHR(uint16_t value);
+    void writeDHR(uint16_t value);
+    void writeDHRLSB(uint8_t value);
     void copyFlashToDHR();
 
     void startWritingToFlashMemory();
-    boolean writeToFlashMemory(const String hexline);
+    boolean writeHexLineToFlashMemory(const String hexline);
+    void writeByteToFlash(const uint16_t addr, const uint8_t value);
 };
 
 #endif // MAX1464_H
