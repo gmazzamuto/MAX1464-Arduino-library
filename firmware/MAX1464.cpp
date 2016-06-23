@@ -84,7 +84,7 @@ void MAX1464::setFlashAddress(uint16_t addr)
     byteShiftOut(0x07, debugMsg);
     for(int i=2;i>=0;i--){
         byte msNibble;
-        msNibble = (addr >> (8*i)) & 0xff;
+        msNibble = (addr >> (4*i)) & 0xf;
         b = (msNibble << 4) | (6 + (i-2));
         byteShiftOut(b, debugMsg);
     }
