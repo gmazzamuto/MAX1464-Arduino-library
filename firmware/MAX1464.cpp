@@ -144,5 +144,37 @@ boolean MAX1464::writeToFlashMemory(const String hexline)
 {
     if(hexline.charAt(0) != ':')
         return false;
+    unsigned int i = 1;
+    uint8_t byteCount = strtoul(hexline.substring(i,i+2).c_str(),NULL,16);
+    i+=2;
+    uint16_t address = strtoul(hexline.substring(i,i+4).c_str(),NULL,16);
+    PrintHex::PrintHex16(&address,1);
+    Serial.println();
+    i+=4;
+    uint8_t recordType = strtoul(hexline.substring(i,i+2).c_str(),NULL,16);
+    i+=2;
+    byte data[byteCount];
+    uint16_t sum = byteCount+(address >> 8)+(address & 0xff)+recordType;
+    for (uint8_t count = 0; count < byteCount; ++count) {
+        byte b = strtoul(hexline.substring(i,i+2).c_str(),NULL,16);
+        sum += b;
+        data[count] = b;
+        i+=2;
+    }
+    sum += strtoul(hexline.substring(i,i+2).c_str(),NULL,16); //checksum
+    if((sum & 0xff) != 0) {
+        Serial.print("Wrong checksum ");
+        PrintHex::PrintHex16(&sum,1);
+        return false;
+    }
+    if(recordType == 0x01) //end of file
+        return true;
+    if(recordType != 0x0) {
+        Serial.println("Wrong recordType");
+        return false;
+    }
+    uint16_t addr = address;
+    for (uint8_t count = 0; count < byteCount; ++count)
+        writeByteToFlash(addr++,data[count]);
     return true;
 }
