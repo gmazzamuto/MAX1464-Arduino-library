@@ -97,6 +97,14 @@ void loop() {
             Serial.println("Halting CPU");
             maxim.haltCPU();
         }
+        else if(String("RESETCPU").startsWith(inputString)) {
+            Serial.println("Resetting CPU");
+            maxim.resetCPU();
+        }
+        else if(String("RELEASECPU").startsWith(inputString)) {
+            Serial.println("Releasing CPU");
+            maxim.releaseCPU();
+        }
         else if(String("!ERASEFLASHMEMORY!").equals(inputString)) {
             Serial.println("Erasing FLASH memory");
             maxim.eraseFlashMemory();

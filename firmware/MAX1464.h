@@ -29,6 +29,8 @@ public:
     MAX1464();
     void readFirmware();
     void haltCPU();
+    void resetCPU();
+    void releaseCPU();
     void writeCommand();
     void enable4WireModeDataTransfer();
     void eraseFlashMemory();

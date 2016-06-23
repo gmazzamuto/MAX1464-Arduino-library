@@ -55,6 +55,25 @@ void MAX1464::haltCPU()
     byteShiftOut(0x78, debugMsg);
 }
 
+void MAX1464::resetCPU()
+{
+    haltCPU();
+    const char *debugMsg = NULL;
+#ifdef SERIALDEBUG
+    debugMsg = "reset CPU (PC to zero)";
+#endif
+    byteShiftOut(0xa8, debugMsg);
+    releaseCPU();
+}
+
+void MAX1464::releaseCPU()
+{
+    const char *debugMsg = NULL;
+#ifdef SERIALDEBUG
+    debugMsg = "release CPU (clear HALT bit)";
+#endif
+    byteShiftOut(0x88, debugMsg);
+}
 
 void MAX1464::writeCommand()
 {
