@@ -187,6 +187,7 @@ void MAX1464::startWritingToFlashMemory()
 
     eraseFlashMemory();
     delay(5);
+    EOFReached = false;
 }
 
 
@@ -219,6 +220,7 @@ boolean MAX1464::writeHexLineToFlashMemory(const String hexline)
     }
     if(recordType == 0x01) { //end of file
         resetCPU();
+        EOFReached = true;
         return true;
     }
     if(recordType != 0x0) {

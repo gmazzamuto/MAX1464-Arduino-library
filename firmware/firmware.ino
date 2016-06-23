@@ -70,15 +70,17 @@ void loop() {
     if (stringComplete) {
         inputString.toUpperCase();
         if(writingToFlash) {
-            if(String("!ENDWRITEFLASHMEMORY!").equals(inputString)) {
+            if(String("!ABORTWRITEFLASHMEMORY!").equals(inputString)) {
                 writingToFlash = false;
-                Serial.println("\nEnd writing to flash memory...");
+                Serial.println("\nAbort writing to flash memory...");
             }
             else if(!maxim.writeHexLineToFlashMemory(inputString)) {
                 Serial.print("\nIllegal line ");
                 Serial.println(inputString);
             }
             else {
+                if(maxim.hasEOFBeenReached())
+                    writingToFlash = false;
                 Serial.print(".");
                 flashLinesWritten++;
                 if(flashLinesWritten>80) {

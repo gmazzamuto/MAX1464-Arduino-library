@@ -42,6 +42,11 @@ public:
     void startWritingToFlashMemory();
     boolean writeHexLineToFlashMemory(const String hexline);
     void writeByteToFlash(const uint16_t addr, const uint8_t value);
+
+    boolean hasEOFBeenReached() {return EOFReached;}
+
+private:
+    boolean EOFReached;
 };
 
 #endif // MAX1464_H
