@@ -48,74 +48,67 @@ void MAX1464::readFirmware() {
 
 void MAX1464::haltCPU()
 {
-    const char *debugMsg = NULL;
 #ifdef SERIALDEBUG
     debugMsg = "halt CPU";
 #endif
-    byteShiftOut(0x78, debugMsg);
+    byteShiftOut(0x78);
 }
 
 void MAX1464::resetCPU()
 {
     haltCPU();
-    const char *debugMsg = NULL;
 #ifdef SERIALDEBUG
     debugMsg = "reset CPU (PC to zero)";
 #endif
-    byteShiftOut(0xa8, debugMsg);
+    byteShiftOut(0xa8);
     releaseCPU();
 }
 
 void MAX1464::releaseCPU()
 {
-    const char *debugMsg = NULL;
 #ifdef SERIALDEBUG
     debugMsg = "release CPU (clear HALT bit)";
 #endif
-    byteShiftOut(0x88, debugMsg);
+    byteShiftOut(0x88);
 }
 
 void MAX1464::writeCommand()
 {
-    const char *debugMsg = NULL;
 #ifdef SERIALDEBUG
     debugMsg = "write byte to flash";
 #endif
-    byteShiftOut(0x18, debugMsg);
+    byteShiftOut(0x18);
 }
 
 void MAX1464::enable4WireModeDataTransfer()
 {
-    const char *debugMsg = NULL;
 #ifdef SERIALDEBUG
     debugMsg = "enable 4 Wire Mode Data Transfer";
 #endif
-    byteShiftOut(0x09, debugMsg);
+    byteShiftOut(0x09);
 }
 
 void MAX1464::eraseFlashMemory()
 {
-    const char *debugMsg = NULL;
 #ifdef SERIALDEBUG
     debugMsg = "erase flash memory";
 #endif
     haltCPU();
-    byteShiftOut(0xe8, debugMsg);
+    byteShiftOut(0xe8);
 }
 
 void MAX1464::setFlashAddress(uint16_t addr)
 {
-    const char *debugMsg = NULL;
 #ifdef SERIALDEBUG
     debugMsg = "write address to PFAR";
 #endif
     uint8_t b;
-    byteShiftOut(0x07, debugMsg);
+    byteShiftOut(0x07);
     for(int i=2;i>=0;i--){
         byte msNibble;
         msNibble = (addr >> (4*i)) & 0xf;
         b = (msNibble << 4) | (6 + (i-2));
-        byteShiftOut(b, debugMsg);
+        byteShiftOut(b);
     }
 #ifdef SERIALDEBUG
     Serial.println();
@@ -124,7 +117,6 @@ void MAX1464::setFlashAddress(uint16_t addr)
 
 void MAX1464::writeDHR(uint16_t value)
 {
-    const char *debugMsg = NULL;
 #ifdef SERIALDEBUG
     debugMsg = "write to DHR";
 #endif
@@ -133,7 +125,7 @@ void MAX1464::writeDHR(uint16_t value)
         byte msNibble;
         msNibble = (value >> (8*i)) & 0xff;
         b = (msNibble << 4) | i;
-        byteShiftOut(b, debugMsg);
+        byteShiftOut(b);
     }
 #ifdef SERIALDEBUG
     Serial.println();
@@ -142,7 +134,6 @@ void MAX1464::writeDHR(uint16_t value)
 
 void MAX1464::writeDHRLSB(uint8_t value)
 {
-    const char *debugMsg = NULL;
 #ifdef SERIALDEBUG
     debugMsg = "write to DHR[7:0]";
 #endif
@@ -151,7 +142,7 @@ void MAX1464::writeDHRLSB(uint8_t value)
         byte msNibble;
         msNibble = (value >> (4*i)) & 0xf;
         b = (msNibble << 4) | i;
-        byteShiftOut(b, debugMsg);
+        byteShiftOut(b);
     }
 #ifdef SERIALDEBUG
     Serial.println();
@@ -160,11 +151,10 @@ void MAX1464::writeDHRLSB(uint8_t value)
 
 void MAX1464::copyFlashToDHR()
 {
-    const char *debugMsg = NULL;
 #ifdef SERIALDEBUG
     debugMsg = "copy FLASH to DHR";
 #endif
-    byteShiftOut(0x38,debugMsg);
+    byteShiftOut(0x38);
 #ifdef SERIALDEBUG
     Serial.println();
 #endif

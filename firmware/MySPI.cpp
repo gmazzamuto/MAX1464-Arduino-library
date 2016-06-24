@@ -46,7 +46,7 @@ void MySPI::bitOut(boolean b) {
     delayMicroseconds(1);
 }
 
-void MySPI::byteShiftOut(byte b, const char* debugMsg) {
+void MySPI::byteShiftOut(byte b) {
     digitalWrite(chipSelect, LOW);
     delayMicroseconds(1);
 #ifdef SERIALDEBUG
@@ -64,6 +64,7 @@ void MySPI::byteShiftOut(byte b, const char* debugMsg) {
     if(debugMsg == NULL)
         debugMsg = "";
     Serial.println(String(" //") + debugMsg);
+    debugMsg = NULL;
 #endif
     digitalWrite(chipSelect, HIGH);
     delayMicroseconds(1);
