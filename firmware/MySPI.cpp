@@ -20,13 +20,13 @@
 #include "MySPI.h"
 
 void MySPI::SPISetup() {
-    pinMode(DATAOUT, OUTPUT);
-    pinMode(DATAIN, INPUT);
-    pinMode(SPICLOCK,OUTPUT);
+    pinMode(SPI_DATAOUT, OUTPUT);
+    pinMode(SPI_DATAIN, INPUT);
+    pinMode(SPI_CLOCK,OUTPUT);
     pinMode(chipSelect,OUTPUT);
 
-    digitalWrite(DATAOUT,LOW);
-    digitalWrite(SPICLOCK,LOW);
+    digitalWrite(SPI_DATAOUT,LOW);
+    digitalWrite(SPI_CLOCK,LOW);
     digitalWrite(chipSelect,HIGH); //disable device
     delayMicroseconds(1);
 }
@@ -38,11 +38,11 @@ void MySPI::bitOut(boolean b) {
     else
         Serial.print('0');
 #endif
-    digitalWrite(DATAOUT,b);
+    digitalWrite(SPI_DATAOUT,b);
     delayMicroseconds(1);
-    digitalWrite(SPICLOCK,HIGH);
+    digitalWrite(SPI_CLOCK,HIGH);
     delayMicroseconds(1);
-    digitalWrite(SPICLOCK,LOW);
+    digitalWrite(SPI_CLOCK,LOW);
     delayMicroseconds(1);
 }
 
@@ -70,16 +70,16 @@ void MySPI::byteShiftOut(byte b, const char* debugMsg) {
 }
 
 boolean MySPI::bitIn() {
-    digitalWrite(SPICLOCK,HIGH);
+    digitalWrite(SPI_CLOCK,HIGH);
     delayMicroseconds(1);
-    boolean in = digitalRead(DATAIN);
+    boolean in = digitalRead(SPI_DATAIN);
 #ifdef SERIALDEBUG
     if(in)
         Serial.print('1');
     else
         Serial.print('0');
 #endif
-    digitalWrite(SPICLOCK,LOW);
+    digitalWrite(SPI_CLOCK,LOW);
     delayMicroseconds(1);
     return in;
 }

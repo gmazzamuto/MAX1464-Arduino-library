@@ -20,16 +20,24 @@
 #define MYSPI_H
 //#define SERIALDEBUG
 
-#define DATAOUT 11 //MOSI
-#define DATAIN  12 //MISO
-#define SPICLOCK 13 //sck
-#define SS 10
+#ifndef SPI_DATAOUT
+#define SPI_DATAOUT 11 //MOSI
+#endif
+#ifndef SPI_DATAIN
+#define SPI_DATAIN  12 //MISO
+#endif
+#ifndef SPI_CLOCK
+#define SPI_CLOCK 13 //sck
+#endif
+#ifndef SPI_CHIPSELECT
+#define SPI_CHIPSELECT 10
+#endif
 
 #include <Arduino.h>
 
 class MySPI {
 public:
-    MySPI() { chipSelect = SS; }
+    MySPI(unsigned int chipSelect=SPI_CHIPSELECT) { setChipSelect(chipSelect); }
     void setChipSelect(unsigned int cs) { chipSelect = cs; }
     void SPISetup();
 
