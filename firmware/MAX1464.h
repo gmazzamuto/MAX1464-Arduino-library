@@ -61,11 +61,13 @@ class MAX1464 : public MySPI
 
 public:
     MAX1464();
-    void readFirmware();
+
     void haltCPU();
     void resetCPU();
     void releaseCPU();
     void eraseFlashMemory();
+
+    void readFirmware();
     void enable4WireModeDataTransfer();
     void setFlashAddress(uint16_t addr);
     void writeDHR(uint16_t value);

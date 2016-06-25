@@ -46,25 +46,6 @@ MAX1464::MAX1464() :
 
 }
 
-void MAX1464::readFirmware() {
-    haltCPU();
-#ifdef SERIALDEBUG
-    Serial.println();
-#endif
-    for(uint16_t addr=0; addr<16; addr++) {
-        // set address
-        setFlashAddress(addr);
-        copyFlashToDHR();
-
-        uint16_t val = wordShiftIn();
-        Serial.print("addr=");
-        PrintHex::PrintHex16(&addr,1);
-        Serial.print(" -> ");
-        PrintHex::PrintHex16(&val,1);
-        Serial.println();
-    }
-}
-
 void MAX1464::haltCPU()
 {
     writeCR(CR_HALT_CPU);
@@ -86,6 +67,26 @@ void MAX1464::eraseFlashMemory()
 {
     haltCPU();
     writeCR(CR_ERASE_FLASH_PARTITION);
+}
+
+
+void MAX1464::readFirmware() {
+    haltCPU();
+#ifdef SERIALDEBUG
+    Serial.println();
+#endif
+    for(uint16_t addr=0; addr<16; addr++) {
+        // set address
+        setFlashAddress(addr);
+        copyFlashToDHR();
+
+        uint16_t val = wordShiftIn();
+        Serial.print("addr=");
+        PrintHex::PrintHex16(&addr,1);
+        Serial.print(" -> ");
+        PrintHex::PrintHex16(&val,1);
+        Serial.println();
+    }
 }
 
 void MAX1464::enable4WireModeDataTransfer()
