@@ -19,6 +19,27 @@
 #include "printhex.h"
 #include "MAX1464.h"
 
+#ifdef SERIALDEBUG
+const char *cr_commands_debug_msgs[16] = {
+    "CR_WRITE16_DHR_TO_CPU_PORT",
+    "CR_WRITE8_DHR_TO_FLASH_MEMORY",
+    "CR_READ16_CPU_PORT",
+    "CR_READ8_FLASH",
+    "CR_READ16_CPU_ACC",
+    "CR_READ8_FLASH_SPEC_PC",
+    "CR_READ16_PC",
+    "CR_HALT_CPU",
+    "CR_START_CPU",
+    "CR_SINGLE_STEP_CPU",
+    "CR_RESET_PC",
+    "CR_RESET_MODULES",
+    "CR_NOP",
+    "CR_ERASE_FLASH_PAGE",
+    "CR_ERASE_FLASH_PARTITION",
+    "CR_SELECT_FLASH_PARTITION_1"
+};
+#endif
+
 MAX1464::MAX1464() :
     MySPI()
 {
@@ -30,54 +51,41 @@ void MAX1464::readFirmware() {
 #ifdef SERIALDEBUG
     Serial.println();
 #endif
-    for(uint16_t addr=0; addr<1; addr++) {
+    for(uint16_t addr=0; addr<16; addr++) {
         // set address
         setFlashAddress(addr);
         copyFlashToDHR();
 
         uint16_t val = wordShiftIn();
-#ifdef SERIALDEBUG
         Serial.print("addr=");
         PrintHex::PrintHex16(&addr,1);
         Serial.print(" -> ");
         PrintHex::PrintHex16(&val,1);
-        Serial.println('--------------');
-#endif
+        Serial.println();
     }
 }
 
 void MAX1464::haltCPU()
 {
-#ifdef SERIALDEBUG
-    debugMsg = "halt CPU";
-#endif
-    byteShiftOut(0x78);
+    writeCR(CR_HALT_CPU);
 }
 
 void MAX1464::resetCPU()
 {
     haltCPU();
-#ifdef SERIALDEBUG
-    debugMsg = "reset CPU (PC to zero)";
-#endif
-    byteShiftOut(0xa8);
+    writeCR(CR_RESET_PC);
     releaseCPU();
 }
 
 void MAX1464::releaseCPU()
 {
-#ifdef SERIALDEBUG
-    debugMsg = "release CPU (clear HALT bit)";
-#endif
-    byteShiftOut(0x88);
+    writeCR(CR_START_CPU);
 }
 
-void MAX1464::writeCommand()
+void MAX1464::eraseFlashMemory()
 {
-#ifdef SERIALDEBUG
-    debugMsg = "write byte to flash";
-#endif
-    byteShiftOut(0x18);
+    haltCPU();
+    writeCR(CR_ERASE_FLASH_PARTITION);
 }
 
 void MAX1464::enable4WireModeDataTransfer()
@@ -86,15 +94,6 @@ void MAX1464::enable4WireModeDataTransfer()
     debugMsg = "enable 4 Wire Mode Data Transfer";
 #endif
     byteShiftOut(0x09);
-}
-
-void MAX1464::eraseFlashMemory()
-{
-#ifdef SERIALDEBUG
-    debugMsg = "erase flash memory";
-#endif
-    haltCPU();
-    byteShiftOut(0xe8);
 }
 
 void MAX1464::setFlashAddress(uint16_t addr)
@@ -151,18 +150,14 @@ void MAX1464::writeDHRLSB(uint8_t value)
 
 void MAX1464::copyFlashToDHR()
 {
-#ifdef SERIALDEBUG
-    debugMsg = "copy FLASH to DHR";
-#endif
-    byteShiftOut(0x38);
-#ifdef SERIALDEBUG
-    Serial.println();
-#endif
+    writeCR(CR_READ8_FLASH);
 }
 
 void MAX1464::startWritingToFlashMemory()
 {
 // see datasheet, page 21
+    haltCPU();
+
     writeDHR(0x0000);
     byteShiftOut(0xd4);
     byteShiftOut(0x08);
@@ -175,7 +170,7 @@ void MAX1464::startWritingToFlashMemory()
     byteShiftOut(0xf4);
     byteShiftOut(0x08);
 
-    eraseFlashMemory();
+    writeCR(CR_ERASE_FLASH_PARTITION);
     delay(5);
     EOFReached = false;
 }
@@ -227,6 +222,19 @@ void MAX1464::writeByteToFlash(const uint16_t addr, const uint8_t value)
 {
     setFlashAddress(addr);
     writeDHRLSB(value);
-    writeCommand();
+    writeCR(CR_WRITE8_DHR_TO_FLASH_MEMORY);
     delayMicroseconds(100);
+}
+
+void MAX1464::writeNibble(uint8_t nibble, IRSA irsa)
+{
+    byteShiftOut((nibble << 4) | (irsa & 0xf));
+}
+
+void MAX1464::writeCR(CR_COMMAND cmd)
+{
+#ifdef SERIALDEBUG
+    debugMsg = cr_commands_debug_msgs[cmd];
+#endif
+    writeNibble(cmd, IRSA_CR);
 }

@@ -19,6 +19,13 @@
 #include "printhex.h"
 #include "MySPI.h"
 
+MySPI::MySPI(unsigned int chipSelect) {
+    setChipSelect(chipSelect);
+#ifdef SERIALDEBUG
+    debugMsg = NULL;
+#endif
+}
+
 void MySPI::SPISetup() {
     pinMode(SPI_DATAOUT, OUTPUT);
     pinMode(SPI_DATAIN, INPUT);

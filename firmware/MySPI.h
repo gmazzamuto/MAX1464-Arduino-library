@@ -37,10 +37,7 @@
 
 class MySPI {
 public:
-    MySPI(unsigned int chipSelect=SPI_CHIPSELECT) {
-        setChipSelect(chipSelect);
-        debugMsg = NULL;
-    }
+    MySPI(unsigned int chipSelect=SPI_CHIPSELECT);
     void setChipSelect(unsigned int cs) { chipSelect = cs; }
     void SPISetup();
 
@@ -49,7 +46,9 @@ protected:
     void byteShiftOut(byte b);
     boolean bitIn();
     uint16_t wordShiftIn();
-    char *debugMsg;
+#ifdef SERIALDEBUG
+    const char *debugMsg;
+#endif
 
 private:
     unsigned int chipSelect;
