@@ -23,7 +23,7 @@ String inputString = "";         // a string to hold incoming data
 boolean stringComplete = false;  // whether the string is complete
 boolean writingToFlash = false;  // whether we are currently writing to MAX1464 flash memory
 unsigned long flashLinesWritten = 0; // count hex lines during flash loop
-MAX1464 maxim;
+MAX1464 maxim(10);
 
 void printIden() {
     Serial.println("Arduino MAX1464 Serial Terminal");
@@ -36,7 +36,9 @@ void setup() {
     // reserve 200 bytes for the inputString:
     inputString.reserve(200);
 
-    maxim.SPISetup();
+    pinMode(10, OUTPUT);
+    digitalWrite(10, HIGH);
+    SPI.begin();
     maxim.enable4WireModeDataTransfer();
 }
 

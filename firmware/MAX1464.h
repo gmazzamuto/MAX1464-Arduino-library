@@ -20,10 +20,11 @@
 #define MAX1464_H
 
 #include <Arduino.h>
+#include <SPI.h>
 
-#include "MySPI.h"
+//#define SERIALDEBUG
 
-class MAX1464 : public MySPI
+class MAX1464
 {
 
     enum CR_COMMAND {
@@ -66,7 +67,7 @@ class MAX1464 : public MySPI
     };
 
 public:
-    MAX1464();
+    MAX1464(int chipSelect = 10);
 
 
     // CR functions
@@ -90,10 +91,18 @@ public:
     void writeByteToFlash(const uint16_t addr, const uint8_t value);
     void writeNibble(uint8_t nibble, IRSA irsa);
 
+    void byteShiftOut(uint8_t b);
+    uint16_t wordShiftIn();
+
     boolean hasEOFBeenReached() {return EOFReached;}
 
 private:
+    int _chipSelect;
     boolean EOFReached;
+    SPISettings settings;
+#ifdef SERIALDEBUG
+    const char *debugMsg;
+#endif
 };
 
 

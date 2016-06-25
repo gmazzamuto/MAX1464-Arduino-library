@@ -40,10 +40,10 @@ const char *cr_commands_debug_msgs[16] = {
 };
 #endif
 
-MAX1464::MAX1464() :
-    MySPI()
+MAX1464::MAX1464(int chipSelect)
 {
-
+    _chipSelect = chipSelect;
+    settings = SPISettings(4000000, LSBFIRST, SPI_MODE0);
 }
 
 
@@ -189,19 +189,17 @@ boolean MAX1464::writeHexLineToFlashMemory(const String hexline)
 
 void MAX1464::readFirmware() {
     haltCPU();
-#ifdef SERIALDEBUG
-    Serial.println();
-#endif
     for(uint16_t addr=0; addr<16; addr++) {
         // set address
         setFlashAddress(addr);
         copyFlashToDHR();
 
         uint16_t val = wordShiftIn();
+        uint8_t val8 = val & 0xff;
         Serial.print("addr=");
         PrintHex::PrintHex16(&addr,1);
         Serial.print(" -> ");
-        PrintHex::PrintHex16(&val,1);
+        PrintHex::PrintHex8(&val8,1);
         Serial.println();
     }
 }
@@ -218,4 +216,51 @@ void MAX1464::writeByteToFlash(const uint16_t addr, const uint8_t value)
 void MAX1464::writeNibble(uint8_t nibble, IRSA irsa)
 {
     byteShiftOut((nibble << 4) | (irsa & 0xf));
+}
+
+void MAX1464::byteShiftOut(uint8_t b)
+{
+#ifdef SERIALDEBUG
+    if(debugMsg == NULL)
+        debugMsg = "";
+    Serial.println(debugMsg);
+    debugMsg = NULL;
+#endif
+    SPI.beginTransaction(settings);
+    digitalWrite(10, LOW);
+    SPI.transfer(b);
+    digitalWrite(10, HIGH);
+    SPI.endTransaction();
+}
+
+uint16_t MAX1464::wordShiftIn()
+{
+    uint16_t w = 0;
+    SPI.beginTransaction(settings);
+    digitalWrite(_chipSelect, LOW);
+    w = SPI.transfer16(0x0000);
+
+    digitalWrite(_chipSelect, HIGH);
+    SPI.endTransaction();
+
+    // reverse bits
+    uint8_t newVal = 0;
+    if (w & 0x1) newVal |= 0x8000;
+    if (w & 0x2) newVal |= 0x4000;
+    if (w & 0x4) newVal |= 0x2000;
+    if (w & 0x8) newVal |= 0x1000;
+    if (w & 0x10) newVal |= 0x800;
+    if (w & 0x20) newVal |= 0x400;
+    if (w & 0x40) newVal |= 0x200;
+    if (w & 0x80) newVal |= 0x100;
+    if (w & 0x100) newVal |= 0x80;
+    if (w & 0x200) newVal |= 0x40;
+    if (w & 0x400) newVal |= 0x20;
+    if (w & 0x800) newVal |= 0x10;
+    if (w & 0x1000) newVal |= 0x8;
+    if (w & 0x2000) newVal |= 0x4;
+    if (w & 0x4000) newVal |= 0x2;
+    if (w & 0x8000) newVal |= 0x1;
+
+    return newVal;
 }
