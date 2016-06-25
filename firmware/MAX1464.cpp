@@ -87,7 +87,7 @@ void MAX1464::enable4WireModeDataTransfer()
 #ifdef SERIALDEBUG
     debugMsg = "enable 4 Wire Mode Data Transfer";
 #endif
-    byteShiftOut(0x09);
+    writeNibble(IMR_4WIRE, IRSA_IMR);
 }
 
 void MAX1464::setFlashAddress(uint16_t addr)

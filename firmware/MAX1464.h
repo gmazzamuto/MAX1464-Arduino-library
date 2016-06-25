@@ -59,6 +59,12 @@ class MAX1464 : public MySPI
         IRSA_IMR = 0x9
     };
 
+    //Interface Mode Register
+    enum IMR {
+        IMR_4WIRE = 0x0,
+        IMR_3WIRE = 0x1
+    };
+
 public:
     MAX1464();
 
