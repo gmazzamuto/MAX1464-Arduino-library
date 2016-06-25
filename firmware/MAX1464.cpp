@@ -46,6 +46,10 @@ MAX1464::MAX1464() :
 
 }
 
+
+
+//CR functions
+
 void MAX1464::haltCPU()
 {
     writeCR(CR_HALT_CPU);
@@ -69,25 +73,14 @@ void MAX1464::eraseFlashMemory()
     writeCR(CR_ERASE_FLASH_PARTITION);
 }
 
-
-void MAX1464::readFirmware() {
-    haltCPU();
-#ifdef SERIALDEBUG
-    Serial.println();
-#endif
-    for(uint16_t addr=0; addr<16; addr++) {
-        // set address
-        setFlashAddress(addr);
-        copyFlashToDHR();
-
-        uint16_t val = wordShiftIn();
-        Serial.print("addr=");
-        PrintHex::PrintHex16(&addr,1);
-        Serial.print(" -> ");
-        PrintHex::PrintHex16(&val,1);
-        Serial.println();
-    }
+void MAX1464::copyFlashToDHR()
+{
+    writeCR(CR_READ8_FLASH);
 }
+
+
+
+//IRSA functions
 
 void MAX1464::enable4WireModeDataTransfer()
 {
@@ -99,60 +92,35 @@ void MAX1464::enable4WireModeDataTransfer()
 
 void MAX1464::setFlashAddress(uint16_t addr)
 {
-#ifdef SERIALDEBUG
-    debugMsg = "write address to PFAR";
-#endif
-    uint8_t b;
-    byteShiftOut(0x07);
-    for(int i=2;i>=0;i--){
-        byte msNibble;
-        msNibble = (addr >> (4*i)) & 0xf;
-        b = (msNibble << 4) | (6 + (i-2));
-        byteShiftOut(b);
-    }
-#ifdef SERIALDEBUG
-    Serial.println();
-#endif
+    writeNibble(0, IRSA_PFAR3);
+    writeNibble((addr >> (4*2)) & 0xf, IRSA_PFAR2);
+    writeNibble((addr >> (4*1)) & 0xf, IRSA_PFAR1);
+    writeNibble((addr >> (4*0)) & 0xf, IRSA_PFAR0);
 }
 
-void MAX1464::writeDHR(uint16_t value)
+void MAX1464::writeDHR(uint16_t data)
 {
-#ifdef SERIALDEBUG
-    debugMsg = "write to DHR";
-#endif
-    uint8_t b;
-    for(int i=3;i>=0;i--){
-        byte msNibble;
-        msNibble = (value >> (8*i)) & 0xff;
-        b = (msNibble << 4) | i;
-        byteShiftOut(b);
-    }
-#ifdef SERIALDEBUG
-    Serial.println();
-#endif
+    writeNibble((data >> (4*3)) & 0xf, IRSA_DHR3);
+    writeNibble((data >> (4*2)) & 0xf, IRSA_DHR2);
+    writeNibble((data >> (4*1)) & 0xf, IRSA_DHR1);
+    writeNibble((data >> (4*0)) & 0xf, IRSA_DHR0);
 }
 
-void MAX1464::writeDHRLSB(uint8_t value)
+void MAX1464::writeDHRLSB(uint8_t data)
 {
-#ifdef SERIALDEBUG
-    debugMsg = "write to DHR[7:0]";
-#endif
-    uint8_t b;
-    for(int i=1;i>=0;i--){
-        byte msNibble;
-        msNibble = (value >> (4*i)) & 0xf;
-        b = (msNibble << 4) | i;
-        byteShiftOut(b);
-    }
-#ifdef SERIALDEBUG
-    Serial.println();
-#endif
+    writeNibble((data >> (4*1)) & 0xf, IRSA_DHR1);
+    writeNibble((data >> (4*0)) & 0xf, IRSA_DHR0);
 }
 
-void MAX1464::copyFlashToDHR()
+void MAX1464::writeCR(CR_COMMAND cmd)
 {
-    writeCR(CR_READ8_FLASH);
+#ifdef SERIALDEBUG
+    debugMsg = cr_commands_debug_msgs[cmd];
+#endif
+    writeNibble(cmd, IRSA_CR);
 }
+
+
 
 void MAX1464::startWritingToFlashMemory()
 {
@@ -219,6 +187,26 @@ boolean MAX1464::writeHexLineToFlashMemory(const String hexline)
     return true;
 }
 
+void MAX1464::readFirmware() {
+    haltCPU();
+#ifdef SERIALDEBUG
+    Serial.println();
+#endif
+    for(uint16_t addr=0; addr<16; addr++) {
+        // set address
+        setFlashAddress(addr);
+        copyFlashToDHR();
+
+        uint16_t val = wordShiftIn();
+        Serial.print("addr=");
+        PrintHex::PrintHex16(&addr,1);
+        Serial.print(" -> ");
+        PrintHex::PrintHex16(&val,1);
+        Serial.println();
+    }
+}
+
+
 void MAX1464::writeByteToFlash(const uint16_t addr, const uint8_t value)
 {
     setFlashAddress(addr);
@@ -230,12 +218,4 @@ void MAX1464::writeByteToFlash(const uint16_t addr, const uint8_t value)
 void MAX1464::writeNibble(uint8_t nibble, IRSA irsa)
 {
     byteShiftOut((nibble << 4) | (irsa & 0xf));
-}
-
-void MAX1464::writeCR(CR_COMMAND cmd)
-{
-#ifdef SERIALDEBUG
-    debugMsg = cr_commands_debug_msgs[cmd];
-#endif
-    writeNibble(cmd, IRSA_CR);
 }

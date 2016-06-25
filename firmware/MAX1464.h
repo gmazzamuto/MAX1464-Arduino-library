@@ -62,23 +62,27 @@ class MAX1464 : public MySPI
 public:
     MAX1464();
 
+
+    // CR functions
     void haltCPU();
     void resetCPU();
     void releaseCPU();
     void eraseFlashMemory();
+    void copyFlashToDHR();
 
-    void readFirmware();
+
+    // IRSA functions
     void enable4WireModeDataTransfer();
     void setFlashAddress(uint16_t addr);
-    void writeDHR(uint16_t value);
-    void writeDHRLSB(uint8_t value);
-    void copyFlashToDHR();
-    void writeNibble(uint8_t nibble, IRSA irsa);
+    void writeDHR(uint16_t data);
+    void writeDHRLSB(uint8_t data);
     void writeCR(CR_COMMAND cmd);
 
     void startWritingToFlashMemory();
     boolean writeHexLineToFlashMemory(const String hexline);
+    void readFirmware();
     void writeByteToFlash(const uint16_t addr, const uint8_t value);
+    void writeNibble(uint8_t nibble, IRSA irsa);
 
     boolean hasEOFBeenReached() {return EOFReached;}
 
