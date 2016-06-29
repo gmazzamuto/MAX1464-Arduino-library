@@ -17,7 +17,7 @@
 */
 
 #include "printhex.h"
-#include "MAX1464.h"
+#include "AbstractMAX1464.h"
 
 #ifdef SERIALDEBUG
 const char *cr_commands_debug_msgs[16] = {
@@ -40,40 +40,41 @@ const char *cr_commands_debug_msgs[16] = {
 };
 #endif
 
-MAX1464::MAX1464(int chipSelect)
+AbstractMAX1464::AbstractMAX1464(int chipSelect)
 {
     _chipSelect = chipSelect;
-    settings = SPISettings(4000000, LSBFIRST, SPI_MODE0);
+    pinMode(_chipSelect, OUTPUT);
+    digitalWrite(_chipSelect, HIGH);
 }
 
 
 
 //CR functions
 
-void MAX1464::haltCPU()
+void AbstractMAX1464::haltCPU()
 {
     writeCR(CR_HALT_CPU);
 }
 
-void MAX1464::resetCPU()
+void AbstractMAX1464::resetCPU()
 {
     haltCPU();
     writeCR(CR_RESET_PC);
     releaseCPU();
 }
 
-void MAX1464::releaseCPU()
+void AbstractMAX1464::releaseCPU()
 {
     writeCR(CR_START_CPU);
 }
 
-void MAX1464::eraseFlashMemory()
+void AbstractMAX1464::eraseFlashMemory()
 {
     haltCPU();
     writeCR(CR_ERASE_FLASH_PARTITION);
 }
 
-void MAX1464::copyFlashToDHR()
+void AbstractMAX1464::copyFlashToDHR()
 {
     writeCR(CR_READ8_FLASH);
 }
@@ -82,7 +83,7 @@ void MAX1464::copyFlashToDHR()
 
 //IRSA functions
 
-void MAX1464::enable4WireModeDataTransfer()
+void AbstractMAX1464::enable4WireModeDataTransfer()
 {
 #ifdef SERIALDEBUG
     debugMsg = "enable 4 Wire Mode Data Transfer";
@@ -90,7 +91,7 @@ void MAX1464::enable4WireModeDataTransfer()
     writeNibble(IMR_4WIRE, IRSA_IMR);
 }
 
-void MAX1464::setFlashAddress(uint16_t addr)
+void AbstractMAX1464::setFlashAddress(uint16_t addr)
 {
     writeNibble(0, IRSA_PFAR3);
     writeNibble((addr >> (4*2)) & 0xf, IRSA_PFAR2);
@@ -98,7 +99,7 @@ void MAX1464::setFlashAddress(uint16_t addr)
     writeNibble((addr >> (4*0)) & 0xf, IRSA_PFAR0);
 }
 
-void MAX1464::writeDHR(uint16_t data)
+void AbstractMAX1464::writeDHR(uint16_t data)
 {
     writeNibble((data >> (4*3)) & 0xf, IRSA_DHR3);
     writeNibble((data >> (4*2)) & 0xf, IRSA_DHR2);
@@ -106,13 +107,13 @@ void MAX1464::writeDHR(uint16_t data)
     writeNibble((data >> (4*0)) & 0xf, IRSA_DHR0);
 }
 
-void MAX1464::writeDHRLSB(uint8_t data)
+void AbstractMAX1464::writeDHRLSB(uint8_t data)
 {
     writeNibble((data >> (4*1)) & 0xf, IRSA_DHR1);
     writeNibble((data >> (4*0)) & 0xf, IRSA_DHR0);
 }
 
-void MAX1464::writeCR(CR_COMMAND cmd)
+void AbstractMAX1464::writeCR(CR_COMMAND cmd)
 {
 #ifdef SERIALDEBUG
     debugMsg = cr_commands_debug_msgs[cmd];
@@ -122,7 +123,7 @@ void MAX1464::writeCR(CR_COMMAND cmd)
 
 
 
-void MAX1464::startWritingToFlashMemory()
+void AbstractMAX1464::startWritingToFlashMemory()
 {
 // see datasheet, page 21
     haltCPU();
@@ -145,7 +146,7 @@ void MAX1464::startWritingToFlashMemory()
 }
 
 
-boolean MAX1464::writeHexLineToFlashMemory(const String hexline)
+boolean AbstractMAX1464::writeHexLineToFlashMemory(const String hexline)
 {
     if(hexline.charAt(0) != ':')
         return false;
@@ -187,7 +188,7 @@ boolean MAX1464::writeHexLineToFlashMemory(const String hexline)
     return true;
 }
 
-void MAX1464::readFirmware() {
+void AbstractMAX1464::readFirmware() {
     haltCPU();
     for(uint16_t addr=0; addr<16; addr++) {
         // set address
@@ -205,7 +206,7 @@ void MAX1464::readFirmware() {
 }
 
 
-void MAX1464::writeByteToFlash(const uint16_t addr, const uint8_t value)
+void AbstractMAX1464::writeByteToFlash(const uint16_t addr, const uint8_t value)
 {
     setFlashAddress(addr);
     writeDHRLSB(value);
@@ -213,54 +214,7 @@ void MAX1464::writeByteToFlash(const uint16_t addr, const uint8_t value)
     delayMicroseconds(100);
 }
 
-void MAX1464::writeNibble(uint8_t nibble, IRSA irsa)
+void AbstractMAX1464::writeNibble(uint8_t nibble, IRSA irsa)
 {
     byteShiftOut((nibble << 4) | (irsa & 0xf));
-}
-
-void MAX1464::byteShiftOut(uint8_t b)
-{
-#ifdef SERIALDEBUG
-    if(debugMsg == NULL)
-        debugMsg = "";
-    Serial.println(debugMsg);
-    debugMsg = NULL;
-#endif
-    SPI.beginTransaction(settings);
-    digitalWrite(10, LOW);
-    SPI.transfer(b);
-    digitalWrite(10, HIGH);
-    SPI.endTransaction();
-}
-
-uint16_t MAX1464::wordShiftIn()
-{
-    uint16_t w = 0;
-    SPI.beginTransaction(settings);
-    digitalWrite(_chipSelect, LOW);
-    w = SPI.transfer16(0x0000);
-
-    digitalWrite(_chipSelect, HIGH);
-    SPI.endTransaction();
-
-    // reverse bits
-    uint8_t newVal = 0;
-    if (w & 0x1) newVal |= 0x8000;
-    if (w & 0x2) newVal |= 0x4000;
-    if (w & 0x4) newVal |= 0x2000;
-    if (w & 0x8) newVal |= 0x1000;
-    if (w & 0x10) newVal |= 0x800;
-    if (w & 0x20) newVal |= 0x400;
-    if (w & 0x40) newVal |= 0x200;
-    if (w & 0x80) newVal |= 0x100;
-    if (w & 0x100) newVal |= 0x80;
-    if (w & 0x200) newVal |= 0x40;
-    if (w & 0x400) newVal |= 0x20;
-    if (w & 0x800) newVal |= 0x10;
-    if (w & 0x1000) newVal |= 0x8;
-    if (w & 0x2000) newVal |= 0x4;
-    if (w & 0x4000) newVal |= 0x2;
-    if (w & 0x8000) newVal |= 0x1;
-
-    return newVal;
 }

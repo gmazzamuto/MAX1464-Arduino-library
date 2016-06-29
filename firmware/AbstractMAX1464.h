@@ -16,15 +16,14 @@
   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef MAX1464_H
-#define MAX1464_H
+#ifndef ABSTRACTMAX1464_H
+#define ABSTRACTMAX1464_H
 
 #include <Arduino.h>
-#include <SPI.h>
 
 //#define SERIALDEBUG
 
-class MAX1464
+class AbstractMAX1464
 {
 
     enum CR_COMMAND {
@@ -67,7 +66,7 @@ class MAX1464
     };
 
 public:
-    MAX1464(int chipSelect = 10);
+    AbstractMAX1464(int chipSelect = 10);
 
 
     // CR functions
@@ -91,19 +90,20 @@ public:
     void writeByteToFlash(const uint16_t addr, const uint8_t value);
     void writeNibble(uint8_t nibble, IRSA irsa);
 
-    void byteShiftOut(uint8_t b);
-    uint16_t wordShiftIn();
+    virtual void byteShiftOut(uint8_t b) = 0;
+    virtual uint16_t wordShiftIn() = 0;
 
     boolean hasEOFBeenReached() {return EOFReached;}
 
 private:
-    int _chipSelect;
     boolean EOFReached;
-    SPISettings settings;
+
+protected:
+    int _chipSelect;
 #ifdef SERIALDEBUG
     const char *debugMsg;
 #endif
 };
 
 
-#endif // MAX1464_H
+#endif // ABSTRACTMAX1464_H
