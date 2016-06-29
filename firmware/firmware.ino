@@ -36,8 +36,6 @@ void setup() {
     // reserve 200 bytes for the inputString:
     inputString.reserve(200);
 
-    pinMode(10, OUTPUT);
-    digitalWrite(10, HIGH);
     SPI.begin();
     maxim.enable4WireModeDataTransfer();
 }
