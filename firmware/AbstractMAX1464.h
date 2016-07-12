@@ -87,9 +87,9 @@ public:
     void writeNibble(uint8_t nibble, IRSA irsa);
 
     // Flash memory
-    void startWritingToFlashMemory();
+    void startWritingToFlashMemory(uint8_t partition = 0);
     boolean writeHexLineToFlashMemory(const String hexline);
-    void readFirmware();
+    void readFirmware(uint8_t partition = 0);
     void writeByteToFlash(const uint16_t addr, const uint8_t value);
 
     // CPU ports

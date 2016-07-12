@@ -146,10 +146,12 @@ void AbstractMAX1464::writeNibble(uint8_t nibble, IRSA irsa)
 
 // Flash memory
 
-void AbstractMAX1464::startWritingToFlashMemory()
+void AbstractMAX1464::startWritingToFlashMemory(uint8_t partition)
 {
 // see datasheet, page 21
     haltCpu();
+    if(partition == 1)
+        writeCR(CR_SELECT_FLASH_PARTITION_1);
 
     writeDHR(0x0000);
     byteShiftOut(0xd4);
@@ -211,11 +213,16 @@ boolean AbstractMAX1464::writeHexLineToFlashMemory(const String hexline)
     return true;
 }
 
-void AbstractMAX1464::readFirmware() {
+void AbstractMAX1464::readFirmware(uint8_t partition) {
     haltCpu();
     uint8_t temp[16];
     uint8_t i = 0;
-    for(uint16_t addr = 0; addr <= 0xfff; addr++) {
+    uint16_t partition_size = 0x1000;
+    if(partition == 1) {
+        writeCR(CR_SELECT_FLASH_PARTITION_1);
+        partition_size = 0x80;
+    }
+    for(uint16_t addr = 0; addr < partition_size; addr++) {
         // set address
         setFlashAddress(addr);
         copyFlashToDhr();

@@ -94,7 +94,12 @@ void loop() {
             printIden();
         }
         else if(String("RFW").startsWith(inputString)) {
-            maxim.readFirmware();
+            char *partition_cp = strtok(NULL, " ");
+            uint8_t partition = 0;
+            if(partition_cp != NULL) {
+                partition = atoi(partition_cp);
+            }
+            maxim.readFirmware(partition);
         }
         else if(String("HALTCPU").startsWith(inputString)) {
             Serial.println("Halting CPU");
@@ -129,9 +134,14 @@ void loop() {
             maxim.eraseFlashMemory();
         }
         else if(String("!WRITEFLASHMEMORY!").equals(inputString)) {
+            char *partition_cp = strtok(NULL, " ");
+            uint8_t partition = 0;
+            if(partition_cp != NULL) {
+                partition = atoi(partition_cp);
+            }
             writingToFlash = true;
             flashLinesWritten = 0;
-            maxim.startWritingToFlashMemory();
+            maxim.startWritingToFlashMemory(partition);
             Serial.println("Writing to flash memory...");
         }
         else {
