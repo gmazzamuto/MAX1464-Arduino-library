@@ -36,6 +36,7 @@ void setup() {
     // reserve 200 bytes for the inputString:
     inputString.reserve(200);
 
+//    maxim.setPins(11,12,13); // only for software SPI
     maxim.begin();
 }
 

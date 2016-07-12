@@ -21,31 +21,45 @@
 MAX1464_SS::MAX1464_SS(int chipSelect) :
     AbstractMAX1464(chipSelect)
 {
-    pinMode(SPI_DATAOUT, OUTPUT);
-    pinMode(SPI_DATAIN, INPUT);
-    pinMode(SPI_CLOCK,OUTPUT);
+    _spi_dataout = 11;
+    _spi_datain = 12;
+    _spi_clock = 13;
+}
+
+void MAX1464_SS::begin()
+{
+    pinMode(_spi_dataout, OUTPUT);
+    pinMode(_spi_datain, INPUT);
+    pinMode(_spi_clock,OUTPUT);
     pinMode(_chipSelect,OUTPUT);
 
-    digitalWrite(SPI_DATAOUT,LOW);
-    digitalWrite(SPI_CLOCK,LOW);
+    digitalWrite(_spi_dataout,LOW);
+    digitalWrite(_spi_clock,LOW);
     digitalWrite(_chipSelect,HIGH); //disable device
 }
 
 void MAX1464_SS::byteShiftOut(uint8_t b)
 {
-    digitalWrite(SPI_CLOCK, LOW);
+    digitalWrite(_spi_clock, LOW);
     digitalWrite(_chipSelect,LOW);
-    shiftOut(SPI_DATAOUT, SPI_CLOCK, LSBFIRST, b);
+    shiftOut(_spi_dataout, _spi_clock, LSBFIRST, b);
     digitalWrite(_chipSelect,HIGH);
 }
 
 uint16_t MAX1464_SS::wordShiftIn()
 {
     uint16_t w = 0;
-    digitalWrite(SPI_CLOCK, LOW);
+    digitalWrite(_spi_clock, LOW);
     digitalWrite(_chipSelect, LOW);
-    w |= (shiftIn(SPI_DATAIN, SPI_CLOCK, MSBFIRST) << 8);
-    w |= (shiftIn(SPI_DATAIN, SPI_CLOCK, MSBFIRST));
+    w |= (shiftIn(_spi_datain, _spi_clock, MSBFIRST) << 8);
+    w |= (shiftIn(_spi_datain, _spi_clock, MSBFIRST));
     digitalWrite(_chipSelect,HIGH);
     return w;
+}
+
+void MAX1464_SS::setPins(int dataout, int datain, int clock)
+{
+    _spi_datain = datain;
+    _spi_dataout = dataout;
+    _spi_clock = clock;
 }

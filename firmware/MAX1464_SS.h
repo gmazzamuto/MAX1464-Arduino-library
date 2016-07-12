@@ -21,26 +21,18 @@
 
 #include "AbstractMAX1464.h"
 
-#ifndef SPI_DATAOUT
-#define SPI_DATAOUT 11 //MOSI
-#endif
-#ifndef SPI_DATAIN
-#define SPI_DATAIN  12 //MISO
-#endif
-#ifndef SPI_CLOCK
-#define SPI_CLOCK 13 //sck
-#endif
-#ifndef SPI_CHIPSELECT
-#define SPI_CHIPSELECT 10
-#endif
-
 class MAX1464_SS : public AbstractMAX1464
 {
 public:
     MAX1464_SS(int chipSelect);
+    virtual void begin();
 
     virtual void byteShiftOut(uint8_t b);
     virtual uint16_t wordShiftIn();
+    void setPins(int dataout, int datain, int clock);
+
+private:
+    int _spi_dataout, _spi_datain, _spi_clock;
 };
 
 #endif // MAX1464_SS_H

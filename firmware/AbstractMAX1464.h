@@ -67,7 +67,7 @@ class AbstractMAX1464
 
 public:
     AbstractMAX1464(int chipSelect = 10);
-
+    virtual void begin() {}
 
     // CR functions
     void haltCPU();
