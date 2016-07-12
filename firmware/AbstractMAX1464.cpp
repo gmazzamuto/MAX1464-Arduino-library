@@ -80,6 +80,11 @@ void AbstractMAX1464::copyFlashToDhr()
     writeCR(CR_READ8_FLASH);
 }
 
+void AbstractMAX1464::singleStepCpu()
+{
+    writeCR(CR_SINGLE_STEP_CPU);
+}
+
 
 
 //IRSA functions

@@ -75,6 +75,7 @@ public:
     void releaseCpu();
     void eraseFlashMemory();
     void copyFlashToDhr();
+    void singleStepCpu();
 
     // IRSA functions
     void enable4WireModeDataTransfer();

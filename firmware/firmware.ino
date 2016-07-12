@@ -116,6 +116,10 @@ void loop() {
                 Serial.println();
             }
         }
+        else if(String("STEP").startsWith(inputString)) {
+            Serial.println("stepping");
+            maxim.singleStepCpu();
+        }
         else if(String("RELEASECPU").startsWith(inputString)) {
             Serial.println("Releasing CPU");
             maxim.releaseCpu();
