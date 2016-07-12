@@ -50,7 +50,7 @@ AbstractMAX1464::AbstractMAX1464(int chipSelect)
 
 
 
-//CR functions
+// simple CR functions
 
 void AbstractMAX1464::haltCPU()
 {
@@ -138,6 +138,8 @@ void AbstractMAX1464::writeNibble(uint8_t nibble, IRSA irsa)
 }
 
 
+
+// Flash memory
 
 void AbstractMAX1464::startWritingToFlashMemory()
 {
@@ -231,6 +233,10 @@ void AbstractMAX1464::writeByteToFlash(const uint16_t addr, const uint8_t value)
     writeCR(CR_WRITE8_DHR_TO_FLASH_MEMORY);
     delayMicroseconds(100);
 }
+
+
+
+// CPU ports
 
 uint16_t AbstractMAX1464::readCPUPort(uint8_t port)
 {

@@ -69,13 +69,12 @@ public:
     AbstractMAX1464(int chipSelect = 10);
     virtual void begin() {}
 
-    // CR functions
+    // simple CR functions
     void haltCPU();
     void resetCPU();
     void releaseCPU();
     void eraseFlashMemory();
     void copyFlashToDHR();
-
 
     // IRSA functions
     void enable4WireModeDataTransfer();
@@ -86,11 +85,13 @@ public:
     void writeCR(CR_COMMAND cmd);
     void writeNibble(uint8_t nibble, IRSA irsa);
 
+    // Flash memory
     void startWritingToFlashMemory();
     boolean writeHexLineToFlashMemory(const String hexline);
     void readFirmware();
     void writeByteToFlash(const uint16_t addr, const uint8_t value);
 
+    // CPU ports
     uint16_t readCPUPort(uint8_t port);
     void writeCPUPort(uint16_t word, uint8_t port);
 
