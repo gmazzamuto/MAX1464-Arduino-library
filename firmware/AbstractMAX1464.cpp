@@ -213,23 +213,48 @@ boolean AbstractMAX1464::writeHexLineToFlashMemory(const String hexline)
 
 void AbstractMAX1464::readFirmware() {
     haltCpu();
-    for(uint16_t addr=0; addr<16; addr++) {
+    uint8_t temp[16];
+    uint8_t i = 0;
+    for(uint16_t addr = 0; addr <= 0xfff; addr++) {
         // set address
         setFlashAddress(addr);
         copyFlashToDhr();
         if(_3wireMode)
             enable3WireModeDataTransfer();
 
-        uint16_t val = wordShiftIn();
-        uint8_t val8 = val & 0xff;
-        Serial.print("addr=");
-        PrintHex::PrintHex16(&addr,1);
-        Serial.print(" -> ");
-        PrintHex::PrintHex8(&val8,1);
-        Serial.println();
-    }
-}
+        temp[i++] = wordShiftIn() & 0xff;
 
+        if(i == 16) {
+            uint8_t checksum = 0;
+            Serial.print(":10"); // byte count
+            checksum += 0x10;
+            union { uint16_t val; struct { uint8_t lsb; uint8_t msb; }; } a;
+            a.val = addr - 15;
+            if(a.msb < 0x10)
+                Serial.print("0");
+            Serial.print(a.msb, HEX);
+            if(a.lsb < 0x10)
+                Serial.print("0");
+            Serial.print(a.lsb, HEX);
+            checksum += a.msb;
+            checksum += a.lsb;
+            Serial.print("00"); // record type
+            for(uint8_t j = 0; j<16; j++) {
+                uint8_t b = temp[j];
+                if(b <= 0xf)
+                    Serial.print("0");
+                Serial.print(b, HEX);
+                checksum += b;
+            }
+            checksum = ~checksum + 1;
+            if(checksum < 0x10)
+                Serial.print("0");
+            Serial.println(checksum, HEX);
+            i = 0;
+        }
+    }
+    Serial.println(":00000001FF");
+}
 
 void AbstractMAX1464::writeByteToFlash(const uint16_t addr, const uint8_t value)
 {
