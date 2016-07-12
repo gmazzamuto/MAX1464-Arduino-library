@@ -70,11 +70,11 @@ public:
     virtual void begin() {}
 
     // simple CR functions
-    void haltCPU();
-    void resetCPU();
-    void releaseCPU();
+    void haltCpu();
+    void resetCpu();
+    void releaseCpu();
     void eraseFlashMemory();
-    void copyFlashToDHR();
+    void copyFlashToDhr();
 
     // IRSA functions
     void enable4WireModeDataTransfer();
@@ -92,8 +92,8 @@ public:
     void writeByteToFlash(const uint16_t addr, const uint8_t value);
 
     // CPU ports
-    uint16_t readCPUPort(uint8_t port);
-    void writeCPUPort(uint16_t word, uint8_t port);
+    uint16_t readCpuPort(uint8_t port);
+    void writeCpuPort(uint16_t word, uint8_t port);
 
     // CPU registers
     uint16_t readCpuAccumulatorRegister();

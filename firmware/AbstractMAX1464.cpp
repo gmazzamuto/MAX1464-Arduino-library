@@ -52,30 +52,30 @@ AbstractMAX1464::AbstractMAX1464(int chipSelect)
 
 // simple CR functions
 
-void AbstractMAX1464::haltCPU()
+void AbstractMAX1464::haltCpu()
 {
     writeCR(CR_HALT_CPU);
 }
 
-void AbstractMAX1464::resetCPU()
+void AbstractMAX1464::resetCpu()
 {
-    haltCPU();
+    haltCpu();
     writeCR(CR_RESET_PC);
-    releaseCPU();
+    releaseCpu();
 }
 
-void AbstractMAX1464::releaseCPU()
+void AbstractMAX1464::releaseCpu()
 {
     writeCR(CR_START_CPU);
 }
 
 void AbstractMAX1464::eraseFlashMemory()
 {
-    haltCPU();
+    haltCpu();
     writeCR(CR_ERASE_FLASH_PARTITION);
 }
 
-void AbstractMAX1464::copyFlashToDHR()
+void AbstractMAX1464::copyFlashToDhr()
 {
     writeCR(CR_READ8_FLASH);
 }
@@ -144,7 +144,7 @@ void AbstractMAX1464::writeNibble(uint8_t nibble, IRSA irsa)
 void AbstractMAX1464::startWritingToFlashMemory()
 {
 // see datasheet, page 21
-    haltCPU();
+    haltCpu();
 
     writeDHR(0x0000);
     byteShiftOut(0xd4);
@@ -192,7 +192,7 @@ boolean AbstractMAX1464::writeHexLineToFlashMemory(const String hexline)
         return false;
     }
     if(recordType == 0x01) { //end of file
-        resetCPU();
+        resetCpu();
         EOFReached = true;
         return true;
     }
@@ -207,11 +207,11 @@ boolean AbstractMAX1464::writeHexLineToFlashMemory(const String hexline)
 }
 
 void AbstractMAX1464::readFirmware() {
-    haltCPU();
+    haltCpu();
     for(uint16_t addr=0; addr<16; addr++) {
         // set address
         setFlashAddress(addr);
-        copyFlashToDHR();
+        copyFlashToDhr();
         if(_3wireMode)
             enable3WireModeDataTransfer();
 
@@ -238,7 +238,7 @@ void AbstractMAX1464::writeByteToFlash(const uint16_t addr, const uint8_t value)
 
 // CPU ports
 
-uint16_t AbstractMAX1464::readCPUPort(uint8_t port)
+uint16_t AbstractMAX1464::readCpuPort(uint8_t port)
 {
     writeNibble(port, IRSA_PFAR0);
     writeCR(CR_READ16_CPU_PORT);
@@ -247,7 +247,7 @@ uint16_t AbstractMAX1464::readCPUPort(uint8_t port)
     return wordShiftIn();
 }
 
-void AbstractMAX1464::writeCPUPort(uint16_t word, uint8_t port)
+void AbstractMAX1464::writeCpuPort(uint16_t word, uint8_t port)
 {
     writeDHR(word);
     writeNibble(port, IRSA_PFAR0);

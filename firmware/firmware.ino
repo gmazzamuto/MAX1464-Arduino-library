@@ -98,11 +98,11 @@ void loop() {
         }
         else if(String("HALTCPU").startsWith(inputString)) {
             Serial.println("Halting CPU");
-            maxim.haltCPU();
+            maxim.haltCpu();
         }
         else if(String("RESETCPU").startsWith(inputString)) {
             Serial.println("Resetting CPU");
-            maxim.resetCPU();
+            maxim.resetCpu();
         }
         else if(String("RP").startsWith(inputString)) {
             char *port_cp = strtok(NULL, " ");
@@ -111,14 +111,14 @@ void loop() {
                 Serial.print("CPU port ");
                 Serial.print(port_cp);
                 Serial.print(" == ");
-                uint16_t value = maxim.readCPUPort(port);
+                uint16_t value = maxim.readCpuPort(port);
                 PrintHex::PrintHex16(&value, 1);
                 Serial.println();
             }
         }
         else if(String("RELEASECPU").startsWith(inputString)) {
             Serial.println("Releasing CPU");
-            maxim.releaseCPU();
+            maxim.releaseCpu();
         }
         else if(String("!ERASEFLASHMEMORY!").equals(inputString)) {
             Serial.println("Erasing FLASH memory");
