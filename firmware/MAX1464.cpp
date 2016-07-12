@@ -39,9 +39,9 @@ void MAX1464::byteShiftOut(uint8_t b)
     debugMsg = NULL;
 #endif
     SPI.beginTransaction(settings);
-    digitalWrite(10, LOW);
+    digitalWrite(_chipSelect, LOW);
     SPI.transfer(b);
-    digitalWrite(10, HIGH);
+    digitalWrite(_chipSelect, HIGH);
     SPI.endTransaction();
 }
 
