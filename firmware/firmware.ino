@@ -36,8 +36,7 @@ void setup() {
     // reserve 200 bytes for the inputString:
     inputString.reserve(200);
 
-    SPI.begin();
-    maxim.enable4WireModeDataTransfer();
+    maxim.begin();
 }
 
 /*

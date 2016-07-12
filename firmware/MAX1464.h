@@ -27,6 +27,7 @@ class MAX1464 : public AbstractMAX1464
 public:
     MAX1464(int chipSelect);
 
+    void begin();
     virtual void byteShiftOut(uint8_t b);
     virtual uint16_t wordShiftIn();
 

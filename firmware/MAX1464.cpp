@@ -24,6 +24,12 @@ MAX1464::MAX1464(int chipSelect) :
     settings = SPISettings(4000000, LSBFIRST, SPI_MODE0);
 }
 
+void MAX1464::begin()
+{
+    SPI.begin();
+    enable4WireModeDataTransfer();
+}
+
 void MAX1464::byteShiftOut(uint8_t b)
 {
 #ifdef SERIALDEBUG
