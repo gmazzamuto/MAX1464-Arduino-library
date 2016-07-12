@@ -33,7 +33,7 @@ class AbstractMAX1464
         CR_READ8_FLASH = 0x3,
         CR_READ16_CPU_ACC = 0x4,
         CR_READ8_FLASH_SPEC_PC = 0x5,
-        CR_READ16_PC = 0x6,
+        CR_READ16_CPU_PC = 0x6,
         CR_HALT_CPU = 0x7,
         CR_START_CPU = 0x8,
         CR_SINGLE_STEP_CPU = 0x9,
@@ -94,6 +94,10 @@ public:
     // CPU ports
     uint16_t readCPUPort(uint8_t port);
     void writeCPUPort(uint16_t word, uint8_t port);
+
+    // CPU registers
+    uint16_t readCpuAccumulatorRegister();
+    uint16_t readCpuProgramCounter();
 
     virtual void byteShiftOut(uint8_t b) = 0;
     virtual uint16_t wordShiftIn() = 0;

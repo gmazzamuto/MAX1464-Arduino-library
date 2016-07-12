@@ -253,3 +253,19 @@ void AbstractMAX1464::writeCPUPort(uint16_t word, uint8_t port)
     writeNibble(port, IRSA_PFAR0);
     writeCR(CR_WRITE16_DHR_TO_CPU_PORT);
 }
+
+
+
+// CPU registers
+
+uint16_t AbstractMAX1464::readCpuAccumulatorRegister()
+{
+    writeCR(CR_READ16_CPU_ACC);
+    return wordShiftIn();
+}
+
+uint16_t AbstractMAX1464::readCpuProgramCounter()
+{
+    writeCR(CR_READ16_CPU_PC);
+    return wordShiftIn();
+}
