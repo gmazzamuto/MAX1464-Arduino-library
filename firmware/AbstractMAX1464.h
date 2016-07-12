@@ -84,12 +84,12 @@ public:
     void writeDHR(uint16_t data);
     void writeDHRLSB(uint8_t data);
     void writeCR(CR_COMMAND cmd);
+    void writeNibble(uint8_t nibble, IRSA irsa);
 
     void startWritingToFlashMemory();
     boolean writeHexLineToFlashMemory(const String hexline);
     void readFirmware();
     void writeByteToFlash(const uint16_t addr, const uint8_t value);
-    void writeNibble(uint8_t nibble, IRSA irsa);
 
     virtual void byteShiftOut(uint8_t b) = 0;
     virtual uint16_t wordShiftIn() = 0;

@@ -132,6 +132,11 @@ void AbstractMAX1464::writeCR(CR_COMMAND cmd)
     writeNibble(cmd, IRSA_CR);
 }
 
+void AbstractMAX1464::writeNibble(uint8_t nibble, IRSA irsa)
+{
+    byteShiftOut((nibble << 4) | (irsa & 0xf));
+}
+
 
 
 void AbstractMAX1464::startWritingToFlashMemory()
@@ -225,9 +230,4 @@ void AbstractMAX1464::writeByteToFlash(const uint16_t addr, const uint8_t value)
     writeDHRLSB(value);
     writeCR(CR_WRITE8_DHR_TO_FLASH_MEMORY);
     delayMicroseconds(100);
-}
-
-void AbstractMAX1464::writeNibble(uint8_t nibble, IRSA irsa)
-{
-    byteShiftOut((nibble << 4) | (irsa & 0xf));
 }
