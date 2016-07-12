@@ -79,6 +79,7 @@ public:
 
     // IRSA functions
     void enable4WireModeDataTransfer();
+    void enable3WireModeDataTransfer();
     void setFlashAddress(uint16_t addr);
     void writeDHR(uint16_t data);
     void writeDHRLSB(uint8_t data);
@@ -97,6 +98,7 @@ public:
 
 private:
     boolean EOFReached;
+    boolean _3wireMode;
 
 protected:
     int _chipSelect;

@@ -43,6 +43,7 @@ const char *cr_commands_debug_msgs[16] = {
 AbstractMAX1464::AbstractMAX1464(int chipSelect)
 {
     _chipSelect = chipSelect;
+    _3wireMode = true;
     pinMode(_chipSelect, OUTPUT);
     digitalWrite(_chipSelect, HIGH);
 }
@@ -89,6 +90,16 @@ void AbstractMAX1464::enable4WireModeDataTransfer()
     debugMsg = "enable 4 Wire Mode Data Transfer";
 #endif
     writeNibble(IMR_4WIRE, IRSA_IMR);
+    _3wireMode = false;
+}
+
+void AbstractMAX1464::enable3WireModeDataTransfer()
+{
+#ifdef SERIALDEBUG
+    debugMsg = "enable 3 Wire Mode Data Transfer";
+#endif
+    writeNibble(IMR_3WIRE, IRSA_IMR);
+    _3wireMode = true;
 }
 
 void AbstractMAX1464::setFlashAddress(uint16_t addr)
@@ -194,6 +205,8 @@ void AbstractMAX1464::readFirmware() {
         // set address
         setFlashAddress(addr);
         copyFlashToDHR();
+        if(_3wireMode)
+            enable3WireModeDataTransfer();
 
         uint16_t val = wordShiftIn();
         uint8_t val8 = val & 0xff;
