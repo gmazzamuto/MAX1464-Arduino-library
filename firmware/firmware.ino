@@ -69,6 +69,7 @@ void writeToFlashMemory() {
 void loop() {
     if (stringComplete) {
         inputString.toUpperCase();
+        inputString = strtok((char *)inputString.c_str(), " ");
         if(writingToFlash) {
             if(String("!ABORTWRITEFLASHMEMORY!").equals(inputString)) {
                 writingToFlash = false;
@@ -102,6 +103,18 @@ void loop() {
         else if(String("RESETCPU").startsWith(inputString)) {
             Serial.println("Resetting CPU");
             maxim.resetCPU();
+        }
+        else if(String("RP").startsWith(inputString)) {
+            char *port_cp = strtok(NULL, " ");
+            if(port_cp != NULL) {
+                uint8_t port = atoi(port_cp);
+                Serial.print("CPU port ");
+                Serial.print(port_cp);
+                Serial.print(" == ");
+                uint16_t value = maxim.readCPUPort(port);
+                PrintHex::PrintHex16(&value, 1);
+                Serial.println();
+            }
         }
         else if(String("RELEASECPU").startsWith(inputString)) {
             Serial.println("Releasing CPU");

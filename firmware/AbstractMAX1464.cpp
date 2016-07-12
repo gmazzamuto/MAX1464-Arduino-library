@@ -231,3 +231,12 @@ void AbstractMAX1464::writeByteToFlash(const uint16_t addr, const uint8_t value)
     writeCR(CR_WRITE8_DHR_TO_FLASH_MEMORY);
     delayMicroseconds(100);
 }
+
+uint16_t AbstractMAX1464::readCPUPort(uint8_t port)
+{
+    writeNibble(port, IRSA_PFAR0);
+    writeCR(CR_READ16_CPU_PORT);
+    if(_3wireMode)
+        enable3WireModeDataTransfer();
+    return wordShiftIn();
+}
