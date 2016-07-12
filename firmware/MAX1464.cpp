@@ -50,13 +50,14 @@ uint16_t MAX1464::wordShiftIn()
     uint16_t w = 0;
     SPI.beginTransaction(settings);
     digitalWrite(_chipSelect, LOW);
+
     w = SPI.transfer16(0x0000);
 
     digitalWrite(_chipSelect, HIGH);
     SPI.endTransaction();
 
     // reverse bits
-    uint8_t newVal = 0;
+    uint16_t newVal = 0;
     if (w & 0x1) newVal |= 0x8000;
     if (w & 0x2) newVal |= 0x4000;
     if (w & 0x4) newVal |= 0x2000;
