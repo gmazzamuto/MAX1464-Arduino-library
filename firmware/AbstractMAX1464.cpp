@@ -240,3 +240,10 @@ uint16_t AbstractMAX1464::readCPUPort(uint8_t port)
         enable3WireModeDataTransfer();
     return wordShiftIn();
 }
+
+void AbstractMAX1464::writeCPUPort(uint16_t word, uint8_t port)
+{
+    writeDHR(word);
+    writeNibble(port, IRSA_PFAR0);
+    writeCR(CR_WRITE16_DHR_TO_CPU_PORT);
+}

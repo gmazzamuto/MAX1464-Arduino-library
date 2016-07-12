@@ -92,6 +92,7 @@ public:
     void writeByteToFlash(const uint16_t addr, const uint8_t value);
 
     uint16_t readCPUPort(uint8_t port);
+    void writeCPUPort(uint16_t word, uint8_t port);
 
     virtual void byteShiftOut(uint8_t b) = 0;
     virtual uint16_t wordShiftIn() = 0;
