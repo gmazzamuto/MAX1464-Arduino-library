@@ -291,6 +291,24 @@ void AbstractMAX1464::writeCpuPort(uint16_t word, uint8_t port)
     writeCR(CR_WRITE16_DHR_TO_CPU_PORT);
 }
 
+void AbstractMAX1464::writeModuleRegister(
+        const uint16_t data, const uint16_t addr)
+{
+    writeCpuPort(data, MODULE_DATA_PORT);
+    writeCpuPort(addr, MODULE_ADDRESS_PORT);
+    uint16_t control = (1 << 15);
+    writeCpuPort(control, MODULE_CONTROL_PORT);
+}
+
+uint16_t AbstractMAX1464::readModuleRegister(const uint16_t addr)
+{
+    writeCpuPort(addr, MODULE_ADDRESS_PORT);
+    uint16_t control = (1 << 15);
+    control |= (1 << 14); // read
+    writeCpuPort(control, MODULE_CONTROL_PORT);
+    return readCpuPort(MODULE_DATA_PORT);
+}
+
 
 
 // CPU registers

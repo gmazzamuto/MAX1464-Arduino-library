@@ -65,6 +65,25 @@ class AbstractMAX1464
         IMR_3WIRE = 0x1
     };
 
+    enum CPU_PORT {
+        PORT_0 = 0x0,
+        PORT_1 = 0x1,
+        PORT_2 = 0x2,
+        PORT_3 = 0x3,
+        PORT_4 = 0x4,
+        PORT_5 = 0x5,
+        PORT_6 = 0x6,
+        PORT_7 = 0x7,
+        PORT_8 = 0x8,
+        PORT_9 = 0x9,
+        PORT_A = 0xa,
+        PORT_B = 0xb,
+        PORT_C = 0xc,
+        PORT_D, MODULE_DATA_PORT = 0xd,
+        PORT_E, MODULE_ADDRESS_PORT = 0xe,
+        PORT_F, MODULE_CONTROL_PORT = 0xf,
+    };
+
 public:
     AbstractMAX1464(int chipSelect = 10);
     virtual void begin() {}
@@ -95,6 +114,8 @@ public:
     // CPU ports
     uint16_t readCpuPort(uint8_t port);
     void writeCpuPort(uint16_t word, uint8_t port);
+    void writeModuleRegister(const uint16_t data, const uint16_t addr);
+    uint16_t readModuleRegister(const uint16_t addr);
 
     // CPU registers
     uint16_t readCpuAccumulatorRegister();
