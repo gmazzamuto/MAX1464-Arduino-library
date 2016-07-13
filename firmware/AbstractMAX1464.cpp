@@ -198,8 +198,6 @@ boolean AbstractMAX1464::writeHexLineToFlashMemory(const String hexline)
     uint8_t byteCount = strtoul(hexline.substring(i,i+2).c_str(),NULL,16);
     i+=2;
     uint16_t address = strtoul(hexline.substring(i,i+4).c_str(),NULL,16);
-    PrintHex::PrintHex16(&address,1);
-    Serial.println();
     i+=4;
     uint8_t recordType = strtoul(hexline.substring(i,i+2).c_str(),NULL,16);
     i+=2;
@@ -218,7 +216,6 @@ boolean AbstractMAX1464::writeHexLineToFlashMemory(const String hexline)
         return false;
     }
     if(recordType == 0x01) { //end of file
-        resetCpu();
         EOFReached = true;
         return true;
     }
