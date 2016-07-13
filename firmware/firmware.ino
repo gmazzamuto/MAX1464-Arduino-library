@@ -117,7 +117,7 @@ void loop() {
                 Serial.print(port_cp);
                 Serial.print(" == ");
                 uint16_t value = maxim.readCpuPort(port);
-                PrintHex::PrintHex16(&value, 1);
+                printHex16(value);
                 Serial.println();
             }
         }

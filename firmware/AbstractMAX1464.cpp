@@ -153,8 +153,8 @@ void AbstractMAX1464::writeCR(CR_COMMAND cmd)
 void AbstractMAX1464::writeNibble(uint8_t nibble, IRSA irsa)
 {
 #ifdef SERIALDEBUG
-    Serial.print("write nibble ");
-    PrintHex::PrintHex8(&nibble, 1);
+    Serial.print("write nibble 0x");
+    Serial.print(nibble, HEX);
     Serial.print("and destination address ");
     Serial.println(irsa_debug_msgs[irsa]);
 #endif
@@ -212,7 +212,7 @@ boolean AbstractMAX1464::writeHexLineToFlashMemory(const String hexline)
     sum += strtoul(hexline.substring(i,i+2).c_str(),NULL,16); //checksum
     if((sum & 0xff) != 0) {
         Serial.print("Wrong checksum ");
-        PrintHex::PrintHex16(&sum,1);
+        printHex16(sum);
         return false;
     }
     if(recordType == 0x01) { //end of file
