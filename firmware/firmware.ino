@@ -80,12 +80,14 @@ void loop() {
                 Serial.println(inputString);
             }
             else {
-                if(maxim.hasEOFBeenReached())
-                    writingToFlash = false;
                 Serial.print(".");
                 flashLinesWritten++;
                 if(flashLinesWritten>80) {
                     flashLinesWritten = 0;
+                    Serial.println();
+                }
+                if(maxim.hasEOFBeenReached()) {
+                    writingToFlash = false;
                     Serial.println();
                 }
             }
