@@ -17,6 +17,7 @@
 */
 
 #include "MAX1464.h"
+#include "printhex.h"
 
 MAX1464::MAX1464(int chipSelect) :
     AbstractMAX1464(chipSelect)
@@ -33,6 +34,7 @@ void MAX1464::begin()
 void MAX1464::byteShiftOut(uint8_t b)
 {
 #ifdef SERIALDEBUG
+    PrintHex::PrintHex8(&b,1);
     if(debugMsg == NULL)
         debugMsg = "";
     Serial.println(debugMsg);

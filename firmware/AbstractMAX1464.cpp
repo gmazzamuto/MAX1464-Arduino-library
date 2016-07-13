@@ -38,6 +38,19 @@ const char *cr_commands_debug_msgs[16] = {
     "CR_ERASE_FLASH_PARTITION",
     "CR_SELECT_FLASH_PARTITION_1"
 };
+
+const char *irsa_debug_msgs[] = {
+    "IRSA_DHR0",
+    "IRSA_DHR1",
+    "IRSA_DHR2",
+    "IRSA_DHR3",
+    "IRSA_PFAR0",
+    "IRSA_PFAR1",
+    "IRSA_PFAR2",
+    "IRSA_PFAR3",
+    "IRSA_CR",
+    "IRSA_IMR",
+};
 #endif
 
 AbstractMAX1464::AbstractMAX1464(int chipSelect)
@@ -139,6 +152,12 @@ void AbstractMAX1464::writeCR(CR_COMMAND cmd)
 
 void AbstractMAX1464::writeNibble(uint8_t nibble, IRSA irsa)
 {
+#ifdef SERIALDEBUG
+    Serial.print("write nibble ");
+    PrintHex::PrintHex8(&nibble, 1);
+    Serial.print("and destination address ");
+    Serial.println(irsa_debug_msgs[irsa]);
+#endif
     byteShiftOut((nibble << 4) | (irsa & 0xf));
 }
 
