@@ -17,8 +17,9 @@
 */
 
 #include "MAX1464_SS.h"
+#include "printhex.h"
 
-MAX1464_SS::MAX1464_SS(int chipSelect) :
+MAX1464_SS::MAX1464_SS(const int chipSelect) :
     AbstractMAX1464(chipSelect)
 {
     _spi_dataout = 11;
@@ -38,15 +39,20 @@ void MAX1464_SS::begin()
     digitalWrite(_chipSelect, HIGH); //disable device
 }
 
-void MAX1464_SS::byteShiftOut(uint8_t b)
+void MAX1464_SS::byteShiftOut(const uint8_t b, const char *debugMsg) const
 {
+#ifdef SERIALDEBUG
+    printHex8(b);
+    if(debugMsg != NULL)
+        Serial.println(debugMsg);
+#endif
     digitalWrite(_spi_clock, LOW);
     digitalWrite(_chipSelect,LOW);
     shiftOut(_spi_dataout, _spi_clock, LSBFIRST, b);
     digitalWrite(_chipSelect, HIGH);
 }
 
-uint16_t MAX1464_SS::wordShiftIn()
+uint16_t MAX1464_SS::wordShiftIn() const
 {
     uint16_t w = 0;
     digitalWrite(_spi_clock, LOW);
@@ -57,7 +63,7 @@ uint16_t MAX1464_SS::wordShiftIn()
     return w;
 }
 
-void MAX1464_SS::setPins(int dataout, int datain, int clock)
+void MAX1464_SS::setPins(const int dataout, const int datain, const int clock)
 {
     _spi_datain = datain;
     _spi_dataout = dataout;

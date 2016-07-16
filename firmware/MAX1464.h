@@ -25,11 +25,12 @@
 class MAX1464 : public AbstractMAX1464
 {
 public:
-    MAX1464(int chipSelect);
+    MAX1464(const int chipSelect);
     virtual void begin();
 
-    virtual void byteShiftOut(uint8_t b);
-    virtual uint16_t wordShiftIn();
+    virtual void byteShiftOut(
+            const uint8_t b, const char *debugMsg = NULL) const;
+    virtual uint16_t wordShiftIn() const;
 
 private:
     SPISettings settings;

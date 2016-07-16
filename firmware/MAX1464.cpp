@@ -19,7 +19,7 @@
 #include "MAX1464.h"
 #include "printhex.h"
 
-MAX1464::MAX1464(int chipSelect) :
+MAX1464::MAX1464(const int chipSelect) :
     AbstractMAX1464(chipSelect)
 {
     settings = SPISettings(4000000, LSBFIRST, SPI_MODE0);
@@ -31,14 +31,12 @@ void MAX1464::begin()
     enable4WireModeDataTransfer();
 }
 
-void MAX1464::byteShiftOut(uint8_t b)
+void MAX1464::byteShiftOut(const uint8_t b, const char *debugMsg) const
 {
 #ifdef SERIALDEBUG
     printHex8(b);
-    if(debugMsg == NULL)
-        debugMsg = "";
-    Serial.println(debugMsg);
-    debugMsg = NULL;
+    if(debugMsg != NULL)
+        Serial.println(debugMsg);
 #endif
     SPI.beginTransaction(settings);
     digitalWrite(_chipSelect, LOW);
@@ -47,7 +45,7 @@ void MAX1464::byteShiftOut(uint8_t b)
     SPI.endTransaction();
 }
 
-uint16_t MAX1464::wordShiftIn()
+uint16_t MAX1464::wordShiftIn() const
 {
     uint16_t w = 0;
     SPI.beginTransaction(settings);

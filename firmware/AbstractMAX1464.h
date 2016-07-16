@@ -28,46 +28,48 @@ class AbstractMAX1464
 {
 
 public:
-    AbstractMAX1464(int chipSelect = 10);
+    AbstractMAX1464(const int chipSelect = 10);
     virtual void begin() {}
 
     // simple CR functions
-    void haltCpu();
-    void resetCpu();
-    void releaseCpu();
-    void eraseFlashMemory();
-    void copyFlashToDhr();
-    void singleStepCpu();
+    void haltCpu() const;
+    void resetCpu() const;
+    void releaseCpu() const;
+    void eraseFlashMemory() const;
+    void copyFlashToDhr() const;
+    void singleStepCpu() const;
 
     // IRSA functions
     void enable4WireModeDataTransfer();
     void enable3WireModeDataTransfer();
-    void setFlashAddress(uint16_t addr);
-    void writeDHR(uint16_t data);
-    void writeDHRLSB(uint8_t data);
-    void writeCR(MAX1464_enums::CR_COMMAND cmd);
-    void writeNibble(uint8_t nibble, MAX1464_enums::IRSA irsa);
+    void setFlashAddress(const uint16_t addr) const;
+    void writeDHR(const uint16_t data) const;
+    void writeDHRLSB(const uint8_t data) const;
+    void writeCR(const MAX1464_enums::CR_COMMAND cmd) const;
+    void writeNibble(
+            const uint8_t nibble, const MAX1464_enums::IRSA irsa) const;
 
     // Flash memory
-    void startWritingToFlashMemory(uint8_t partition = 0);
+    void startWritingToFlashMemory(const uint8_t partition = 0) const;
     boolean writeHexLineToFlashMemory(const String hexline);
-    void readFirmware(uint8_t partition = 0);
-    void writeByteToFlash(const uint8_t value, const uint16_t addr);
+    void readFirmware(const uint8_t partition = 0) const;
+    void writeByteToFlash(const uint8_t value, const uint16_t addr) const;
 
     // CPU ports
-    uint16_t readCpuPort(uint8_t port);
-    void writeCpuPort(uint16_t word, uint8_t port);
-    void writeModuleRegister(const uint16_t data, const uint16_t addr);
-    uint16_t readModuleRegister(const uint16_t addr);
+    uint16_t readCpuPort(const uint8_t port) const;
+    void writeCpuPort(const uint16_t word, const uint8_t port) const;
+    void writeModuleRegister(const uint16_t data, const uint16_t addr) const;
+    uint16_t readModuleRegister(const uint16_t addr) const;
 
     // CPU registers
-    uint16_t readCpuAccumulatorRegister();
-    uint16_t readCpuProgramCounter();
+    uint16_t readCpuAccumulatorRegister() const;
+    uint16_t readCpuProgramCounter() const;
 
-    virtual void byteShiftOut(uint8_t b) = 0;
-    virtual uint16_t wordShiftIn() = 0;
+    virtual void byteShiftOut(
+            const uint8_t b, const char *debugMsg = NULL) const = 0;
+    virtual uint16_t wordShiftIn() const = 0;
 
-    boolean hasEOFBeenReached() {return EOFReached;}
+    boolean hasEOFBeenReached() const {return EOFReached;}
 
 private:
     boolean EOFReached;
@@ -75,9 +77,6 @@ private:
 
 protected:
     int _chipSelect;
-#ifdef SERIALDEBUG
-    const char *debugMsg;
-#endif
 };
 
 

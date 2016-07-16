@@ -24,12 +24,13 @@
 class MAX1464_SS : public AbstractMAX1464
 {
 public:
-    MAX1464_SS(int chipSelect);
+    MAX1464_SS(const int chipSelect);
     virtual void begin();
 
-    virtual void byteShiftOut(uint8_t b);
-    virtual uint16_t wordShiftIn();
-    void setPins(int dataout, int datain, int clock);
+    virtual void byteShiftOut(
+            const uint8_t b, const char *debugMsg = NULL) const;
+    virtual uint16_t wordShiftIn() const;
+    void setPins(const int dataout, const int datain, const int clock);
 
 private:
     int _spi_dataout, _spi_datain, _spi_clock;

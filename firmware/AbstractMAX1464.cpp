@@ -55,10 +55,11 @@ const char *irsa_debug_msgs[] = {
 
 using namespace MAX1464_enums;
 
-AbstractMAX1464::AbstractMAX1464(int chipSelect)
+AbstractMAX1464::AbstractMAX1464(const int chipSelect)
 {
     _chipSelect = chipSelect;
     _3wireMode = true;
+    EOFReached = false;
     pinMode(_chipSelect, OUTPUT);
     digitalWrite(_chipSelect, HIGH);
 }
@@ -67,35 +68,35 @@ AbstractMAX1464::AbstractMAX1464(int chipSelect)
 
 // simple CR functions
 
-void AbstractMAX1464::haltCpu()
+void AbstractMAX1464::haltCpu() const
 {
     writeCR(CR_HALT_CPU);
 }
 
-void AbstractMAX1464::resetCpu()
+void AbstractMAX1464::resetCpu() const
 {
     haltCpu();
     writeCR(CR_RESET_PC);
     releaseCpu();
 }
 
-void AbstractMAX1464::releaseCpu()
+void AbstractMAX1464::releaseCpu() const
 {
     writeCR(CR_START_CPU);
 }
 
-void AbstractMAX1464::eraseFlashMemory()
+void AbstractMAX1464::eraseFlashMemory() const
 {
     haltCpu();
     writeCR(CR_ERASE_FLASH_PARTITION);
 }
 
-void AbstractMAX1464::copyFlashToDhr()
+void AbstractMAX1464::copyFlashToDhr() const
 {
     writeCR(CR_READ8_FLASH);
 }
 
-void AbstractMAX1464::singleStepCpu()
+void AbstractMAX1464::singleStepCpu() const
 {
     writeCR(CR_SINGLE_STEP_CPU);
 }
@@ -106,23 +107,16 @@ void AbstractMAX1464::singleStepCpu()
 
 void AbstractMAX1464::enable4WireModeDataTransfer()
 {
-#ifdef SERIALDEBUG
-    debugMsg = "enable 4 Wire Mode Data Transfer";
-#endif
     writeNibble(IMR_4WIRE, IRSA_IMR);
     _3wireMode = false;
 }
 
 void AbstractMAX1464::enable3WireModeDataTransfer()
 {
-#ifdef SERIALDEBUG
-    debugMsg = "enable 3 Wire Mode Data Transfer";
-#endif
-    writeNibble(IMR_3WIRE, IRSA_IMR);
     _3wireMode = true;
 }
 
-void AbstractMAX1464::setFlashAddress(uint16_t addr)
+void AbstractMAX1464::setFlashAddress(const uint16_t addr) const
 {
     writeNibble(0, IRSA_PFAR3);
     writeNibble((addr >> (4*2)) & 0xf, IRSA_PFAR2);
@@ -130,7 +124,7 @@ void AbstractMAX1464::setFlashAddress(uint16_t addr)
     writeNibble((addr >> (4*0)) & 0xf, IRSA_PFAR0);
 }
 
-void AbstractMAX1464::writeDHR(uint16_t data)
+void AbstractMAX1464::writeDHR(const uint16_t data) const
 {
     writeNibble((data >> (4*3)) & 0xf, IRSA_DHR3);
     writeNibble((data >> (4*2)) & 0xf, IRSA_DHR2);
@@ -138,36 +132,37 @@ void AbstractMAX1464::writeDHR(uint16_t data)
     writeNibble((data >> (4*0)) & 0xf, IRSA_DHR0);
 }
 
-void AbstractMAX1464::writeDHRLSB(uint8_t data)
+void AbstractMAX1464::writeDHRLSB(const uint8_t data) const
 {
     writeNibble((data >> (4*1)) & 0xf, IRSA_DHR1);
     writeNibble((data >> (4*0)) & 0xf, IRSA_DHR0);
 }
 
-void AbstractMAX1464::writeCR(CR_COMMAND cmd)
+void AbstractMAX1464::writeCR(const CR_COMMAND cmd) const
 {
-#ifdef SERIALDEBUG
-    debugMsg = cr_commands_debug_msgs[cmd];
-#endif
     writeNibble(cmd, IRSA_CR);
 }
 
-void AbstractMAX1464::writeNibble(uint8_t nibble, IRSA irsa)
+void AbstractMAX1464::writeNibble(const uint8_t nibble, const IRSA irsa) const
 {
+    const char *debugMsg = NULL;
 #ifdef SERIALDEBUG
     Serial.print("write nibble 0x");
     Serial.print(nibble, HEX);
     Serial.print("and destination address ");
     Serial.println(irsa_debug_msgs[irsa]);
+    if(irsa == IRSA_CR) {
+        debugMsg = cr_commands_debug_msgs[nibble];
+    }
 #endif
-    byteShiftOut((nibble << 4) | (irsa & 0xf));
+    byteShiftOut((nibble << 4) | (irsa & 0xf), debugMsg);
 }
 
 
 
 // Flash memory
 
-void AbstractMAX1464::startWritingToFlashMemory(uint8_t partition)
+void AbstractMAX1464::startWritingToFlashMemory(const uint8_t partition) const
 {
 // see datasheet, page 21
     haltCpu();
@@ -188,7 +183,6 @@ void AbstractMAX1464::startWritingToFlashMemory(uint8_t partition)
 
     writeCR(CR_ERASE_FLASH_PARTITION);
     delay(5);
-    EOFReached = false;
 }
 
 
@@ -221,6 +215,8 @@ boolean AbstractMAX1464::writeHexLineToFlashMemory(const String hexline)
         EOFReached = true;
         return true;
     }
+    else
+        EOFReached = false;
     if(recordType != 0x0) {
         Serial.println("Wrong recordType");
         return false;
@@ -231,7 +227,7 @@ boolean AbstractMAX1464::writeHexLineToFlashMemory(const String hexline)
     return true;
 }
 
-void AbstractMAX1464::readFirmware(uint8_t partition) {
+void AbstractMAX1464::readFirmware(const uint8_t partition) const {
     haltCpu();
     uint8_t temp[16];
     uint8_t i = 0;
@@ -245,7 +241,7 @@ void AbstractMAX1464::readFirmware(uint8_t partition) {
         setFlashAddress(addr);
         copyFlashToDhr();
         if(_3wireMode)
-            enable3WireModeDataTransfer();
+            writeNibble(IMR_3WIRE, IRSA_IMR);
 
         temp[i++] = wordShiftIn() & 0xff;
 
@@ -281,7 +277,8 @@ void AbstractMAX1464::readFirmware(uint8_t partition) {
     Serial.println(":00000001FF");
 }
 
-void AbstractMAX1464::writeByteToFlash(const uint8_t value, const uint16_t addr)
+void AbstractMAX1464::writeByteToFlash(
+        const uint8_t value, const uint16_t addr) const
 {
     setFlashAddress(addr);
     writeDHRLSB(value);
@@ -293,16 +290,17 @@ void AbstractMAX1464::writeByteToFlash(const uint8_t value, const uint16_t addr)
 
 // CPU ports
 
-uint16_t AbstractMAX1464::readCpuPort(uint8_t port)
+uint16_t AbstractMAX1464::readCpuPort(const uint8_t port) const
 {
     writeNibble(port, IRSA_PFAR0);
     writeCR(CR_READ16_CPU_PORT);
     if(_3wireMode)
-        enable3WireModeDataTransfer();
+        writeNibble(IMR_3WIRE, IRSA_IMR);
     return wordShiftIn();
 }
 
-void AbstractMAX1464::writeCpuPort(uint16_t word, uint8_t port)
+void AbstractMAX1464::writeCpuPort(
+        const uint16_t word, const uint8_t port) const
 {
     writeDHR(word);
     writeNibble(port, IRSA_PFAR0);
@@ -310,7 +308,7 @@ void AbstractMAX1464::writeCpuPort(uint16_t word, uint8_t port)
 }
 
 void AbstractMAX1464::writeModuleRegister(
-        const uint16_t data, const uint16_t addr)
+        const uint16_t data, const uint16_t addr) const
 {
     writeCpuPort(data, MODULE_DATA_PORT);
     writeCpuPort(addr, MODULE_ADDRESS_PORT);
@@ -318,7 +316,7 @@ void AbstractMAX1464::writeModuleRegister(
     writeCpuPort(control, MODULE_CONTROL_PORT);
 }
 
-uint16_t AbstractMAX1464::readModuleRegister(const uint16_t addr)
+uint16_t AbstractMAX1464::readModuleRegister(const uint16_t addr) const
 {
     writeCpuPort(addr, MODULE_ADDRESS_PORT);
     uint16_t control = (1 << 15);
@@ -331,13 +329,13 @@ uint16_t AbstractMAX1464::readModuleRegister(const uint16_t addr)
 
 // CPU registers
 
-uint16_t AbstractMAX1464::readCpuAccumulatorRegister()
+uint16_t AbstractMAX1464::readCpuAccumulatorRegister() const
 {
     writeCR(CR_READ16_CPU_ACC);
     return wordShiftIn();
 }
 
-uint16_t AbstractMAX1464::readCpuProgramCounter()
+uint16_t AbstractMAX1464::readCpuProgramCounter() const
 {
     writeCR(CR_READ16_CPU_PC);
     return wordShiftIn();
