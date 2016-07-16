@@ -19,7 +19,8 @@
 #include "printhex.h"
 
 #include "MAX1464.h"
-using namespace MAX1464_enums;
+//#include "MAX1464_SS.h" // for software SPI
+//using namespace MAX1464_enums; // enums for register addresses, bits, etc
 
 String inputString = "";         // a string to hold incoming data
 boolean stringComplete = false;  // whether the string is complete
@@ -28,6 +29,7 @@ boolean writingToFlash = false;  // whether we are currently writing to MAX1464
 unsigned long hexLinesWritten = 0; // count hex lines written during flash loop
 
 MAX1464 max1464(10);
+//MAX1464_SS max1464(10); // for software SPI
 
 void printIden() {
     Serial.println("Arduino MAX1464 Serial Terminal");
