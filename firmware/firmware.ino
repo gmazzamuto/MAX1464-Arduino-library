@@ -24,7 +24,7 @@ boolean stringComplete = false;  // whether the string is complete
 boolean writingToFlash = false;  // whether we are currently writing to MAX1464
                                  // flash memory
 unsigned long hexLinesWritten = 0; // count hex lines written during flash loop
-MAX1464 maxim(10);
+MAX1464 max1464(10);
 
 void printIden() {
     Serial.println("Arduino MAX1464 Serial Terminal");
@@ -35,8 +35,8 @@ void setup() {
     printIden();
     inputString.reserve(200);
 
-//    maxim.setPins(11,12,13); // only for software SPI
-    maxim.begin();
+//    max1464.setPins(11,12,13); // only for software SPI
+    max1464.begin();
 }
 
 void serialEvent() {
@@ -60,7 +60,7 @@ void loop() {
                 writingToFlash = false;
                 Serial.println("\nAbort writing to flash memory...");
             }
-            else if(!maxim.writeHexLineToFlashMemory(inputString)) {
+            else if(!max1464.writeHexLineToFlashMemory(inputString)) {
                 Serial.print("\nIllegal line ");
                 Serial.println(inputString);
             }
@@ -71,7 +71,7 @@ void loop() {
                     hexLinesWritten = 0;
                     Serial.println();
                 }
-                if(maxim.hasEOFBeenReached()) {
+                if(max1464.hasEOFBeenReached()) {
                     writingToFlash = false;
                     Serial.println();
                 }
@@ -86,15 +86,15 @@ void loop() {
             if(partition_cp != NULL) {
                 partition = atoi(partition_cp);
             }
-            maxim.readFirmware(partition);
+            max1464.readFirmware(partition);
         }
         else if(String("HALTCPU").startsWith(inputString)) {
             Serial.println("Halting CPU");
-            maxim.haltCpu();
+            max1464.haltCpu();
         }
         else if(String("RESETCPU").startsWith(inputString)) {
             Serial.println("Resetting CPU");
-            maxim.resetCpu();
+            max1464.resetCpu();
         }
         else if(String("RP").startsWith(inputString)) {
             char *port_cp = strtok(NULL, " ");
@@ -103,22 +103,22 @@ void loop() {
                 Serial.print("CPU port ");
                 Serial.print(port_cp);
                 Serial.print(" == ");
-                uint16_t value = maxim.readCpuPort(port);
+                uint16_t value = max1464.readCpuPort(port);
                 printHex16(value);
                 Serial.println();
             }
         }
         else if(String("STEP").startsWith(inputString)) {
             Serial.println("stepping");
-            maxim.singleStepCpu();
+            max1464.singleStepCpu();
         }
         else if(String("RELEASECPU").startsWith(inputString)) {
             Serial.println("Releasing CPU");
-            maxim.releaseCpu();
+            max1464.releaseCpu();
         }
         else if(String("!ERASEFLASHMEMORY!").equals(inputString)) {
             Serial.println("Erasing FLASH memory");
-            maxim.eraseFlashMemory();
+            max1464.eraseFlashMemory();
         }
         else if(String("!WRITEFLASHMEMORY!").equals(inputString)) {
             char *partition_cp = strtok(NULL, " ");
@@ -128,7 +128,7 @@ void loop() {
             }
             writingToFlash = true;
             hexLinesWritten = 0;
-            maxim.startWritingToFlashMemory(partition);
+            max1464.startWritingToFlashMemory(partition);
             Serial.println("Writing to flash memory...");
         }
         else {
