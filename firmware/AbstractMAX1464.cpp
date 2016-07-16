@@ -227,7 +227,7 @@ boolean AbstractMAX1464::writeHexLineToFlashMemory(const String hexline)
     }
     uint16_t addr = address;
     for (uint8_t count = 0; count < byteCount; ++count)
-        writeByteToFlash(addr++,data[count]);
+        writeByteToFlash(data[count],addr++);
     return true;
 }
 
@@ -281,7 +281,7 @@ void AbstractMAX1464::readFirmware(uint8_t partition) {
     Serial.println(":00000001FF");
 }
 
-void AbstractMAX1464::writeByteToFlash(const uint16_t addr, const uint8_t value)
+void AbstractMAX1464::writeByteToFlash(const uint8_t value, const uint16_t addr)
 {
     setFlashAddress(addr);
     writeDHRLSB(value);

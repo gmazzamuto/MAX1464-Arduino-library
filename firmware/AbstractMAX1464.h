@@ -52,7 +52,7 @@ public:
     void startWritingToFlashMemory(uint8_t partition = 0);
     boolean writeHexLineToFlashMemory(const String hexline);
     void readFirmware(uint8_t partition = 0);
-    void writeByteToFlash(const uint16_t addr, const uint8_t value);
+    void writeByteToFlash(const uint8_t value, const uint16_t addr);
 
     // CPU ports
     uint16_t readCpuPort(uint8_t port);
