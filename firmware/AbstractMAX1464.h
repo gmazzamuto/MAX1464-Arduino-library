@@ -45,8 +45,8 @@ public:
     void setFlashAddress(uint16_t addr);
     void writeDHR(uint16_t data);
     void writeDHRLSB(uint8_t data);
-    void writeCR(CR_COMMAND cmd);
-    void writeNibble(uint8_t nibble, IRSA irsa);
+    void writeCR(MAX1464_enums::CR_COMMAND cmd);
+    void writeNibble(uint8_t nibble, MAX1464_enums::IRSA irsa);
 
     // Flash memory
     void startWritingToFlashMemory(uint8_t partition = 0);

@@ -17,13 +17,16 @@
 */
 
 #include "printhex.h"
+
 #include "MAX1464.h"
+using namespace MAX1464_enums;
 
 String inputString = "";         // a string to hold incoming data
 boolean stringComplete = false;  // whether the string is complete
 boolean writingToFlash = false;  // whether we are currently writing to MAX1464
                                  // flash memory
 unsigned long hexLinesWritten = 0; // count hex lines written during flash loop
+
 MAX1464 max1464(10);
 
 void printIden() {

@@ -53,6 +53,8 @@ const char *irsa_debug_msgs[] = {
 };
 #endif
 
+using namespace MAX1464_enums;
+
 AbstractMAX1464::AbstractMAX1464(int chipSelect)
 {
     _chipSelect = chipSelect;

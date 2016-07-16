@@ -20,6 +20,8 @@
 #define MAX1464_ENUMS_H
 
 
+namespace MAX1464_enums {
+
 // Command Register
 enum CR_COMMAND {
     CR_WRITE16_DHR_TO_CPU_PORT      = 0x0,
@@ -319,5 +321,8 @@ enum OSC_CONTROL {
     OSC_TRIM_m16    = 0x1f00,
     OSC_ENCKOUT	    = 0x0001,
 };
+
+
+}  // namespace
 
 #endif // MAX1464_ENUMS_H
