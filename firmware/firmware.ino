@@ -21,8 +21,9 @@
 
 String inputString = "";         // a string to hold incoming data
 boolean stringComplete = false;  // whether the string is complete
-boolean writingToFlash = false;  // whether we are currently writing to MAX1464 flash memory
-unsigned long flashLinesWritten = 0; // count hex lines during flash loop
+boolean writingToFlash = false;  // whether we are currently writing to MAX1464
+                                 // flash memory
+unsigned long hexLinesWritten = 0; // count hex lines written during flash loop
 MAX1464 maxim(10);
 
 void printIden() {
@@ -30,40 +31,24 @@ void printIden() {
 }
 
 void setup() {
-    // initialize serial:
     Serial.begin(115200);
     printIden();
-    // reserve 200 bytes for the inputString:
     inputString.reserve(200);
 
 //    maxim.setPins(11,12,13); // only for software SPI
     maxim.begin();
 }
 
-/*
-SerialEvent occurs whenever a new data comes in the
-hardware serial RX.  This routine is run between each
-time loop() runs, so using delay inside loop can delay
-response.  Multiple bytes of data may be available.
-*/
 void serialEvent() {
     while (Serial.available()) {
-        // get the new byte:
         char inChar = (char)Serial.read();
-        // if the incoming character is a newline, set a flag
-        // so the main loop can do something about it:
         if (inChar == '\n') {
             stringComplete = true;
         }
         else {
-            // add it to the inputString:
             inputString += inChar;
         }
     }
-}
-
-void writeToFlashMemory() {
-
 }
 
 void loop() {
@@ -81,9 +66,9 @@ void loop() {
             }
             else {
                 Serial.print(".");
-                flashLinesWritten++;
-                if(flashLinesWritten>80) {
-                    flashLinesWritten = 0;
+                hexLinesWritten++;
+                if(hexLinesWritten>80) {
+                    hexLinesWritten = 0;
                     Serial.println();
                 }
                 if(maxim.hasEOFBeenReached()) {
@@ -142,7 +127,7 @@ void loop() {
                 partition = atoi(partition_cp);
             }
             writingToFlash = true;
-            flashLinesWritten = 0;
+            hexLinesWritten = 0;
             maxim.startWritingToFlashMemory(partition);
             Serial.println("Writing to flash memory...");
         }
