@@ -87,8 +87,18 @@ void AbstractMAX1464::releaseCpu() const
 
 void AbstractMAX1464::eraseFlashMemory() const
 {
-    haltCpu();
+    eraseFlashPartition(PARTITION_0);
+    eraseFlashPartition(PARTITION_1);
+}
+
+void AbstractMAX1464::eraseFlashPartition(const FLASH_PARTITION partition) const
+{
+    if(partition == PARTITION_1)
+        writeCR(CR_SELECT_FLASH_PARTITION_1);
+    else
+        haltCpu();
     writeCR(CR_ERASE_FLASH_PARTITION);
+    delay(5);
 }
 
 void AbstractMAX1464::copyFlashToDhr() const
@@ -162,12 +172,11 @@ void AbstractMAX1464::writeNibble(const uint8_t nibble, const IRSA irsa) const
 
 // Flash memory
 
-void AbstractMAX1464::startWritingToFlashMemory(const uint8_t partition) const
+void AbstractMAX1464::beginWritingToFlashPartition(
+        const FLASH_PARTITION partition) const
 {
 // see datasheet, page 21
     haltCpu();
-    if(partition == 1)
-        writeCR(CR_SELECT_FLASH_PARTITION_1);
 
     writeDHR(0x0000);
     byteShiftOut(0xd4);
@@ -181,8 +190,7 @@ void AbstractMAX1464::startWritingToFlashMemory(const uint8_t partition) const
     byteShiftOut(0xf4);
     byteShiftOut(0x08);
 
-    writeCR(CR_ERASE_FLASH_PARTITION);
-    delay(5);
+    eraseFlashPartition(partition);
 }
 
 
@@ -227,7 +235,8 @@ boolean AbstractMAX1464::writeHexLineToFlashMemory(const String hexline)
     return true;
 }
 
-void AbstractMAX1464::readFirmware(const uint8_t partition) const {
+void AbstractMAX1464::readFlashPartition(
+        const FLASH_PARTITION partition) const {
     haltCpu();
     uint8_t temp[16];
     uint8_t i = 0;
@@ -286,6 +295,9 @@ void AbstractMAX1464::writeByteToFlash(
     delayMicroseconds(100);
 }
 
+boolean AbstractMAX1464::hasEOFBeenReached() const {
+    return EOFReached;
+}
 
 
 // CPU ports

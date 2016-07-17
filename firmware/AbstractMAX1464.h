@@ -36,6 +36,8 @@ public:
     void resetCpu() const;
     void releaseCpu() const;
     void eraseFlashMemory() const;
+    void eraseFlashPartition(
+            const MAX1464_enums::FLASH_PARTITION partition) const;
     void copyFlashToDhr() const;
     void singleStepCpu() const;
 
@@ -50,10 +52,13 @@ public:
             const uint8_t nibble, const MAX1464_enums::IRSA irsa) const;
 
     // Flash memory
-    void startWritingToFlashMemory(const uint8_t partition = 0) const;
+    void beginWritingToFlashPartition(const MAX1464_enums::FLASH_PARTITION partition) const;
     boolean writeHexLineToFlashMemory(const String hexline);
-    void readFirmware(const uint8_t partition = 0) const;
+    void readFlashPartition(
+            const MAX1464_enums::FLASH_PARTITION partition
+            = MAX1464_enums::PARTITION_0) const;
     void writeByteToFlash(const uint8_t value, const uint16_t addr) const;
+    boolean hasEOFBeenReached() const;
 
     // CPU ports
     uint16_t readCpuPort(const MAX1464_enums::CPU_PORT port) const;
@@ -74,8 +79,6 @@ public:
     virtual void byteShiftOut(
             const uint8_t b, const char *debugMsg = NULL) const = 0;
     virtual uint16_t wordShiftIn() const = 0;
-
-    boolean hasEOFBeenReached() const {return EOFReached;}
 
 private:
     boolean EOFReached;

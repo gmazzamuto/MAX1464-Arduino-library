@@ -20,7 +20,7 @@
 
 #include "MAX1464.h"
 //#include "MAX1464_SS.h" // for software SPI
-//using namespace MAX1464_enums; // enums for register addresses, bits, etc
+using namespace MAX1464_enums; // enums for register addresses, bits, etc
 
 String inputString = "";         // a string to hold incoming data
 boolean stringComplete = false;  // whether the string is complete
@@ -91,7 +91,7 @@ void loop() {
             if(partition_cp != NULL) {
                 partition = atoi(partition_cp);
             }
-            max1464.readFirmware(partition);
+            max1464.readFlashPartition((FLASH_PARTITION)partition);
         }
         else if(String("HALTCPU").startsWith(inputString)) {
             Serial.println("Halting CPU");
@@ -133,7 +133,7 @@ void loop() {
             }
             writingToFlash = true;
             hexLinesWritten = 0;
-            max1464.startWritingToFlashMemory(partition);
+            max1464.beginWritingToFlashPartition((FLASH_PARTITION)partition);
             Serial.println("Writing to flash memory...");
         }
         else {
