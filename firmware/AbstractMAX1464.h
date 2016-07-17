@@ -20,7 +20,7 @@
 #define ABSTRACTMAX1464_H
 
 #include <Arduino.h>
-#include "max1464_enums.h"
+#include "MAX1464_enums.h"
 
 //#define MAX1464_SERIALDEBUG
 
