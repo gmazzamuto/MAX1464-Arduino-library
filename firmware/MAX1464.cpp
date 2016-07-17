@@ -33,7 +33,7 @@ void MAX1464::begin()
 
 void MAX1464::byteShiftOut(const uint8_t b, const char *debugMsg) const
 {
-#ifdef SERIALDEBUG
+#ifdef MAX1464_SERIALDEBUG
     printHex8(b);
     if(debugMsg != NULL)
         Serial.println(debugMsg);

@@ -19,7 +19,7 @@
 #include "printhex.h"
 #include "AbstractMAX1464.h"
 
-#ifdef SERIALDEBUG
+#ifdef MAX1464_SERIALDEBUG
 const char *cr_commands_debug_msgs[16] = {
     "CR_WRITE16_DHR_TO_CPU_PORT",
     "CR_WRITE8_DHR_TO_FLASH_MEMORY",
@@ -146,7 +146,7 @@ void AbstractMAX1464::writeCR(const CR_COMMAND cmd) const
 void AbstractMAX1464::writeNibble(const uint8_t nibble, const IRSA irsa) const
 {
     const char *debugMsg = NULL;
-#ifdef SERIALDEBUG
+#ifdef MAX1464_SERIALDEBUG
     Serial.print("write nibble 0x");
     Serial.print(nibble, HEX);
     Serial.print("and destination address ");

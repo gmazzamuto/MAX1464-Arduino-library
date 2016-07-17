@@ -22,7 +22,7 @@
 #include <Arduino.h>
 #include "max1464_enums.h"
 
-//#define SERIALDEBUG
+//#define MAX1464_SERIALDEBUG
 
 class AbstractMAX1464
 {
