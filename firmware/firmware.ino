@@ -108,7 +108,7 @@ void loop() {
                 Serial.print("CPU port ");
                 Serial.print(port_cp);
                 Serial.print(" == ");
-                uint16_t value = max1464.readCpuPort(port);
+                uint16_t value = max1464.readCpuPort((CPU_PORT)port);
                 printHex16(value);
                 Serial.println();
             }

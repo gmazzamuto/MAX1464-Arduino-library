@@ -290,7 +290,7 @@ void AbstractMAX1464::writeByteToFlash(
 
 // CPU ports
 
-uint16_t AbstractMAX1464::readCpuPort(const uint8_t port) const
+uint16_t AbstractMAX1464::readCpuPort(const CPU_PORT port) const
 {
     writeNibble(port, IRSA_PFAR0);
     writeCR(CR_READ16_CPU_PORT);
@@ -300,7 +300,7 @@ uint16_t AbstractMAX1464::readCpuPort(const uint8_t port) const
 }
 
 void AbstractMAX1464::writeCpuPort(
-        const uint16_t word, const uint8_t port) const
+        const uint16_t word, const CPU_PORT port) const
 {
     writeDHR(word);
     writeNibble(port, IRSA_PFAR0);

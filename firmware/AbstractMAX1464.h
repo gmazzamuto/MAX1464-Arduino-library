@@ -56,8 +56,9 @@ public:
     void writeByteToFlash(const uint8_t value, const uint16_t addr) const;
 
     // CPU ports
-    uint16_t readCpuPort(const uint8_t port) const;
-    void writeCpuPort(const uint16_t word, const uint8_t port) const;
+    uint16_t readCpuPort(const MAX1464_enums::CPU_PORT port) const;
+    void writeCpuPort(
+            const uint16_t word, const MAX1464_enums::CPU_PORT port) const;
 
     // module registers
     void writeModuleRegister(const uint16_t data,
