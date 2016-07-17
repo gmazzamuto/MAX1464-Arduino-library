@@ -58,8 +58,13 @@ public:
     // CPU ports
     uint16_t readCpuPort(const uint8_t port) const;
     void writeCpuPort(const uint16_t word, const uint8_t port) const;
-    void writeModuleRegister(const uint16_t data, const uint16_t addr) const;
-    uint16_t readModuleRegister(const uint16_t addr) const;
+
+    // module registers
+    void writeModuleRegister(const uint16_t data,
+                             const MAX1464_enums::MODULE_REGISTER_ADDRESS addr
+                             ) const;
+    uint16_t readModuleRegister(
+            const MAX1464_enums::MODULE_REGISTER_ADDRESS addr) const;
 
     // CPU registers
     uint16_t readCpuAccumulatorRegister() const;
