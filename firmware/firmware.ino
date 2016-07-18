@@ -40,7 +40,7 @@ void setup() {
     printIden();
     inputString.reserve(200);
 
-//    max1464.setPins(11,12,13); // only for software SPI
+//    max1464.setSpiPins(11,12,13); // only for software SPI
     max1464.begin();
 }
 

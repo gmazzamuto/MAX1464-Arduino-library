@@ -63,7 +63,8 @@ uint16_t MAX1464_SS::wordShiftIn() const
     return w;
 }
 
-void MAX1464_SS::setPins(const int dataout, const int datain, const int clock)
+void MAX1464_SS::setSpiPins(
+        const int dataout, const int datain, const int clock)
 {
     _spi_datain = datain;
     _spi_dataout = dataout;

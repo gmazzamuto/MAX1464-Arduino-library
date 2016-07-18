@@ -30,7 +30,7 @@ public:
     virtual void byteShiftOut(
             const uint8_t b, const char *debugMsg = NULL) const;
     virtual uint16_t wordShiftIn() const;
-    void setPins(const int dataout, const int datain, const int clock);
+    void setSpiPins(const int dataout, const int datain, const int clock);
 
 private:
     int _spi_dataout, _spi_datain, _spi_clock;
