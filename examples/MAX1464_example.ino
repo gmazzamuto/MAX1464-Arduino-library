@@ -20,8 +20,6 @@
  * \file
  */
 
-#include "printhex.h"
-
 #include "MAX1464.h"
 
 // for software SPI
@@ -122,7 +120,7 @@ void loop() {
                 Serial.print(port_cp);
                 Serial.print(" == ");
                 uint16_t value = max1464.readCpuPort((CPU_PORT)port);
-                printHex16(value);
+                Serial.print(value, HEX);
                 Serial.println();
             }
         }
