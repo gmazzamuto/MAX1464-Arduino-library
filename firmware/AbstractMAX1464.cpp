@@ -85,11 +85,24 @@ void AbstractMAX1464::releaseCpu() const
     writeCR(CR_START_CPU);
 }
 
+/**
+ * @brief Erase flash memory, both partitions.
+ *
+ * \pre CPU must be halted.
+ */
+
 void AbstractMAX1464::eraseFlashMemory() const
 {
     eraseFlashPartition(PARTITION_0);
     eraseFlashPartition(PARTITION_1);
 }
+
+/**
+ * @brief Erase a flash partition.
+ * @param partition
+ *
+ * \pre CPU must be halted.
+ */
 
 void AbstractMAX1464::eraseFlashPartition(const FLASH_PARTITION partition) const
 {
@@ -115,16 +128,29 @@ void AbstractMAX1464::singleStepCpu() const
 
 //IRSA functions
 
+/**
+ * @brief Enable 4-wire mode data transfer.
+ */
+
 void AbstractMAX1464::enable4WireModeDataTransfer()
 {
     writeNibble(IMR_4WIRE, IRSA_IMR);
     _3wireMode = false;
 }
 
+/**
+ * @brief Enable 3-wire mode data transfer.
+ */
+
 void AbstractMAX1464::enable3WireModeDataTransfer()
 {
     _3wireMode = true;
 }
+
+/**
+ * @brief Write flash address into PFAR[11:0]
+ * @param addr
+ */
 
 void AbstractMAX1464::setFlashAddress(const uint16_t addr) const
 {
@@ -134,6 +160,11 @@ void AbstractMAX1464::setFlashAddress(const uint16_t addr) const
     writeNibble((addr >> (4*0)) & 0xf, IRSA_PFAR0);
 }
 
+/**
+ * @brief Write data to DHR[15:0]
+ * @param data
+ */
+
 void AbstractMAX1464::writeDHR(const uint16_t data) const
 {
     writeNibble((data >> (4*3)) & 0xf, IRSA_DHR3);
@@ -142,16 +173,32 @@ void AbstractMAX1464::writeDHR(const uint16_t data) const
     writeNibble((data >> (4*0)) & 0xf, IRSA_DHR0);
 }
 
+/**
+ * @brief Write data to DHR[8:0]
+ * @param data
+ */
+
 void AbstractMAX1464::writeDHRLSB(const uint8_t data) const
 {
     writeNibble((data >> (4*1)) & 0xf, IRSA_DHR1);
     writeNibble((data >> (4*0)) & 0xf, IRSA_DHR0);
 }
 
+/**
+ * @brief Write command to CR[3:0]
+ * @param cmd
+ */
+
 void AbstractMAX1464::writeCR(const CR_COMMAND cmd) const
 {
     writeNibble(cmd, IRSA_CR);
 }
+
+/**
+ * @brief Write a nibble to the destination specified by irsa
+ * @param nibble
+ * @param irsa
+ */
 
 void AbstractMAX1464::writeNibble(const uint8_t nibble, const IRSA irsa) const
 {
@@ -171,6 +218,18 @@ void AbstractMAX1464::writeNibble(const uint8_t nibble, const IRSA irsa) const
 
 
 // Flash memory
+
+/**
+ * @brief Prepare to write flash memory
+ * @param partition
+ *
+ *
+ * This function halts the CPU, disables all analog modules and erases the
+ * selected partition. To actually flash the firmware, call
+ * writeHexLineToFlashMemory() for every hex line to be written.
+ *
+ * \warning The selected partition will be erased.
+ */
 
 void AbstractMAX1464::beginWritingToFlashPartition(
         const FLASH_PARTITION partition) const
@@ -193,6 +252,15 @@ void AbstractMAX1464::beginWritingToFlashPartition(
     eraseFlashPartition(partition);
 }
 
+/**
+ * @brief Flashes a single Intel HEX line
+ * @param hexline string containing a single line from a hex file
+ * @return false if the provided line is illegal, true otherwise
+ *
+ *
+ * \pre beginWritingToFlashPartition() must have been called at the beginning of a
+ * flash cycle.
+ */
 
 boolean AbstractMAX1464::writeHexLineToFlashMemory(const String hexline)
 {
@@ -234,6 +302,15 @@ boolean AbstractMAX1464::writeHexLineToFlashMemory(const String hexline)
         writeByteToFlash(data[count],addr++);
     return true;
 }
+
+/**
+ * @brief Read a flash partition
+ * @param partition
+ *
+ *
+ * This function halts the CPU then prints the whole content of the specified
+ * flash partition to the Serial interface in Intel HEX format.
+ */
 
 void AbstractMAX1464::readFlashPartition(
         const FLASH_PARTITION partition) const {
@@ -294,6 +371,12 @@ void AbstractMAX1464::writeByteToFlash(
     writeCR(CR_WRITE8_DHR_TO_FLASH_MEMORY);
     delayMicroseconds(100);
 }
+
+/**
+ * @brief Last line of the HEX file.
+ * @return true if writeHexLineToFlashMemory() was last called with the last
+ * line of a HEX file (0x01 record type), false otherwise.
+ */
 
 boolean AbstractMAX1464::hasEOFBeenReached() const {
     return EOFReached;

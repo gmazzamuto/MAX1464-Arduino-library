@@ -21,6 +21,15 @@
 
 #include "AbstractMAX1464.h"
 
+/**
+ * @brief Interface to the Maxim %MAX1464 Multichannel Sensor Signal Processor,
+ * software SPI version.
+ *
+ * This class does not make use of the Arduino SPI library; SPI communication
+ * is implemented in software. Please specify the SPI pins using setSpiPins().
+ * Data transfer mode defaults to 3-wire.
+ */
+
 class MAX1464_SS : public AbstractMAX1464
 {
 public:

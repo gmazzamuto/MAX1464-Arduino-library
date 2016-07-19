@@ -19,10 +19,19 @@
 #ifndef MAX1464_ENUMS_H
 #define MAX1464_ENUMS_H
 
+/**
+ * \brief Enumerations for register addresses, configuration bits, etc.
+ */
 
 namespace MAX1464_enums {
 
+
 // Command Register
+
+/**
+ * @brief Command Register (CR) decoding.
+ */
+
 enum CR_COMMAND {
     CR_WRITE16_DHR_TO_CPU_PORT      = 0x0,
     CR_WRITE8_DHR_TO_FLASH_MEMORY   = 0x1,
@@ -42,7 +51,13 @@ enum CR_COMMAND {
     CR_SELECT_FLASH_PARTITION_1     = 0xf,
 };
 
-//Internal Register Set Address
+
+// Internal Register Set Address
+
+/**
+ * @brief Internal Register Set Address (IRSA) decoding.
+ */
+
 enum IRSA {
     IRSA_DHR0   = 0x0,
     IRSA_DHR1   = 0x1,
@@ -56,11 +71,34 @@ enum IRSA {
     IRSA_IMR    = 0x9,
 };
 
-//Interface Mode Register
+
+// Interface Mode Register
+
+/**
+ * @brief Interface Mode Register (IMR) decoding.
+ */
+
 enum IMR {
     IMR_4WIRE = 0x0,
     IMR_3WIRE = 0x1,
 };
+
+
+// Flash partition
+
+/**
+ * @brief Flash partition.
+ */
+
+enum FLASH_PARTITION {
+    PARTITION_0,
+    PARTITION_1
+};
+
+
+/**
+ * @brief CPU ports.
+ */
 
 enum CPU_PORT {
     CPU_PORT_0 = 0x0,
@@ -80,6 +118,10 @@ enum CPU_PORT {
     CPU_PORT_E, MODULE_ADDRESS_PORT = 0xe,
     CPU_PORT_F, MODULE_CONTROL_PORT = 0xf,
 };
+
+/**
+ * @brief Module register addresses.
+ */
 
 enum MODULE_REGISTER_ADDRESS {
     R_ADC_CONTROL   = 0x00,
@@ -107,6 +149,11 @@ enum MODULE_REGISTER_ADDRESS {
     R_GPIO2_CONTROL = 0x41,
 };
 
+
+/**
+ * @brief ADC_CONTROL register bits.
+ */
+
 enum ADC_CONTROL {
     CNVT_ADC_1       = 0x0004,
     CNVT_ADC_2       = 0x0002,
@@ -122,8 +169,12 @@ enum ADC_CONTROL {
     CNVT_SE_INM     = 0x0900,
 };
 
-
 // Programmable-Gain Amplifier
+
+/**
+ * @brief Programmable-Gain Amplifier (PGA) bits in the ADC_CONFIG_nA register.
+ */
+
 enum PGA {
     CONFIGA_PGA_00, CONFIGA_PGA_GAIN_0_99   = 0x0000,
     CONFIGA_PGA_01, CONFIGA_PGA_GAIN_7_7    = 0x0800,
@@ -144,6 +195,10 @@ enum PGA {
     CONFIGA_PGA_1E, CONFIGA_PGA_GAIN_244    = 0xf000,
 };
 
+/**
+ * @brief ADC clock bits in the ADC_CONFIG_nA register.
+ */
+
 enum ADC_CLK {
     CONFIGA_CLK0, CONFIGA_CLK_1MHz      = 0x0000,
     CONFIGA_CLK1, CONFIGA_CLK_500kHz	= 0x0100,
@@ -155,6 +210,10 @@ enum ADC_CLK {
     CONFIGA_CLK7, CONFIGA_CLK_7_8125kHz = 0x0700,
 };
 
+/**
+ * @brief ADC resolution bits in the ADC_CONFIG_nA register.
+ */
+
 enum ADC_RES {
     CONFIGA_RES0, CONFIGA_RES_9BIT  = 0x0000,
     CONFIGA_RES1, CONFIGA_RES_10BIT = 0x0010,
@@ -164,6 +223,10 @@ enum ADC_RES {
     CONFIGA_RES5, CONFIGA_RES_15BIT = 0x0050,
     CONFIGA_RES6, CONFIGA_RES_16BIT = 0x0060,
 };
+
+/**
+ * @brief ADC coarse offest bits in the ADC_CONFIG_nA register.
+ */
 
 enum ADC_COARSE_OFFSET {
     CONFIGA_CO7 = 0x0007,
@@ -184,6 +247,10 @@ enum ADC_COARSE_OFFSET {
     CONFIGA_COF = 0x000f,
 };
 
+/**
+ * @brief ADC bias current bits in the ADC_CONFIG_nB register.
+ */
+
 enum ADC_BIAS_CURRENT {
     CONFIGB_BIAS0, CONFIGB_BIAS_1_8 = 0x0000,
     CONFIGB_BIAS1, CONFIGB_BIAS_2_8 = 0x0010,
@@ -195,16 +262,29 @@ enum ADC_BIAS_CURRENT {
     CONFIGB_BIAS7, CONFIGB_BIAS_8_8 = 0x0070,
 };
 
+/**
+ * @brief ADC reference source bits in the ADC_CONFIG_nB register.
+ */
+
 enum ADC_REF_SOURCE {
     CONFIGB_REF0, CONFIGB_REF_VDD   = 0x0000,
     CONFIGB_REF1, CONFIGB_REF_2VREF = 0x0001,
     CONFIGB_REF2, CONFIGB_REF_4VBG  = 0x0002,
 };
 
+
+/**
+ * @brief DOPn_CONTROL register bits.
+ */
+
 enum DOP_CONTROL {
     DOP_CONTROL_ENPWM = 0x0010,
     DOP_CONTROL_ENDAC = 0x0001,
 };
+
+/**
+ * @brief DOPn_CONFIG register bits.
+ */
 
 enum DOP_CONFIG {
     DOP_CONFIG_PWMLG = 0x0100,
@@ -212,10 +292,20 @@ enum DOP_CONFIG {
     DOP_CONFIG_REF   = 0x0001,
 };
 
+
+/**
+ * @brief OPAMP_CONFIG register bits.
+ */
+
 enum OPAMP_CONFIG {
     OPAMP_BUF1  = 0x0001,
     OPAMP_BUF2  = 0x0002,
 };
+
+
+/**
+ * @brief GPIOn_CONTROL register bits.
+ */
 
 enum GPIO_CONTROL {
     GPIO_OUT_HIGH   = 0x0030,
@@ -231,11 +321,20 @@ enum GPIO_CONTROL {
     GPIO_OUT        = 0x0020,
 };
 
+
+/**
+ * @brief TMR_CONTROL register bits.
+ */
+
 enum TMR_CONTROL {
     TMR_CONTROL_TMDN    = 0x8000,
     TMR_CONTROL_TMEN    = 0x4000,
     TMR_CONTROL_ENAHALT = 0x0001,
 };
+
+/**
+ * @brief TMR_CONFIG register bits.
+ */
 
 enum TMR_CONFIG {
     TMR_CONFIG_PS_1   	= 0x0000,
@@ -276,6 +375,11 @@ enum TMR_CONFIG {
     TMR_CONFIG_786ms	= TMR_CONFIG_PS_384 | 4095,
 };
 
+
+/**
+ * @brief PO_CONTROL register bits.
+ */
+
 enum PO_CONTROL {
     PWR_ADC     = 0x0100,
     PWR_DAC2	= 0x0020,
@@ -285,6 +389,11 @@ enum PO_CONTROL {
     PWR_ALL_ON	= PWR_ADC | PWR_DAC2 | PWR_DAC1 | PWR_OP2 | PWR_OP1,
     PWR_ALL_OFF  = 0x0000,
 };
+
+
+/**
+ * @brief OSC_CONTROL register bits.
+ */
 
 enum OSC_CONTROL {
     OSC_TRIM_15     = 0x0f00,

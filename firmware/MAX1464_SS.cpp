@@ -27,6 +27,13 @@ MAX1464_SS::MAX1464_SS(const int chipSelect) :
     _spi_clock = 13;
 }
 
+/**
+ * @brief Initialize the SPI bus.
+ *
+ * Initializes the specified SPI pins to outputs, pulling SCK and MOSI low, and
+ * SS high.
+ */
+
 void MAX1464_SS::begin()
 {
     pinMode(_spi_dataout, OUTPUT);
@@ -62,6 +69,13 @@ uint16_t MAX1464_SS::wordShiftIn() const
     digitalWrite(_chipSelect, HIGH);
     return w;
 }
+
+/**
+ * @brief Set the pins to be used for SPI communication.
+ * @param dataout MOSI
+ * @param datain MISO
+ * @param clock SCK
+ */
 
 void MAX1464_SS::setSpiPins(
         const int dataout, const int datain, const int clock)

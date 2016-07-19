@@ -24,11 +24,25 @@
 
 //#define MAX1464_SERIALDEBUG
 
+/**
+ * @brief The AbstractMAX1464 class provides a complete interface to the Maxim
+ * %MAX1464 Multichannel Sensor Signal Processor.
+ *
+ * The serial communication details are left unimplemented. The MAX1464 class
+ * makes use of the Arduino SPI library, whereas the MAX1464_SS class
+ * implements SPI in software.
+ */
+
 class AbstractMAX1464
 {
 
 public:
     AbstractMAX1464(const int chipSelect = 10);
+    /**
+     * @brief Initialize the SPI bus.
+     *
+     * The default implementation does nothing.
+     */
     virtual void begin() {}
 
     // simple CR functions
