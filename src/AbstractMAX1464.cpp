@@ -326,8 +326,6 @@ void AbstractMAX1464::readFlashPartition(
         // set address
         setFlashAddress(addr);
         copyFlashToDhr();
-        if(_3wireMode)
-            writeNibble(IMR_3WIRE, IRSA_IMR);
 
         temp[i++] = wordShiftIn() & 0xff;
 
@@ -389,8 +387,6 @@ uint16_t AbstractMAX1464::readCpuPort(const CPU_PORT port) const
 {
     writeNibble(port, IRSA_PFAR0);
     writeCR(CR_READ16_CPU_PORT);
-    if(_3wireMode)
-        writeNibble(IMR_3WIRE, IRSA_IMR);
     return wordShiftIn();
 }
 

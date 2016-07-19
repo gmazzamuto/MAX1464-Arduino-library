@@ -19,6 +19,8 @@
 #include "MAX1464_SS.h"
 #include "printhex.h"
 
+using namespace MAX1464_enums;
+
 MAX1464_SS::MAX1464_SS(const int chipSelect) :
     AbstractMAX1464(chipSelect)
 {
@@ -37,7 +39,8 @@ MAX1464_SS::MAX1464_SS(const int chipSelect) :
 void MAX1464_SS::begin()
 {
     pinMode(_spi_dataout, OUTPUT);
-    pinMode(_spi_datain, INPUT);
+    if(!_3wireMode)
+        pinMode(_spi_datain, INPUT);
     pinMode(_spi_clock, OUTPUT);
     pinMode(_chipSelect, OUTPUT);
 
@@ -61,12 +64,20 @@ void MAX1464_SS::byteShiftOut(const uint8_t b, const char *debugMsg) const
 
 uint16_t MAX1464_SS::wordShiftIn() const
 {
+    if(_3wireMode) {
+        writeNibble(IMR_3WIRE, IRSA_IMR);
+        pinMode(_spi_datain, INPUT);
+    }
     uint16_t w = 0;
     digitalWrite(_spi_clock, LOW);
     digitalWrite(_chipSelect, LOW);
     w |= (shiftIn(_spi_datain, _spi_clock, MSBFIRST) << 8);
     w |= (shiftIn(_spi_datain, _spi_clock, MSBFIRST));
     digitalWrite(_chipSelect, HIGH);
+    if(_3wireMode) {
+        pinMode(_spi_dataout, OUTPUT);
+        digitalWrite(_spi_dataout, LOW);
+    }
     return w;
 }
 
@@ -75,6 +86,9 @@ uint16_t MAX1464_SS::wordShiftIn() const
  * @param dataout MOSI
  * @param datain MISO
  * @param clock SCK
+ *
+ * If dataout and datain are the same pin, the device is configured in 3-wire
+ * SPI mode.
  */
 
 void MAX1464_SS::setSpiPins(
@@ -83,4 +97,6 @@ void MAX1464_SS::setSpiPins(
     _spi_datain = datain;
     _spi_dataout = dataout;
     _spi_clock = clock;
+    if(_spi_datain == _spi_dataout)
+        enable3WireModeDataTransfer();
 }

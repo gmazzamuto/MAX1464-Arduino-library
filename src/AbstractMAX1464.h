@@ -56,8 +56,6 @@ public:
     void singleStepCpu() const;
 
     // IRSA functions
-    void enable4WireModeDataTransfer();
-    void enable3WireModeDataTransfer();
     void setFlashAddress(const uint16_t addr) const;
     void writeDHR(const uint16_t data) const;
     void writeDHRLSB(const uint8_t data) const;
@@ -96,10 +94,13 @@ public:
 
 private:
     boolean EOFReached;
-    boolean _3wireMode;
 
 protected:
     int _chipSelect;
+    boolean _3wireMode;
+
+    void enable4WireModeDataTransfer();
+    void enable3WireModeDataTransfer();
 };
 
 

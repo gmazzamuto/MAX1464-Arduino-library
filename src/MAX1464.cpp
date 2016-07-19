@@ -26,10 +26,7 @@ MAX1464::MAX1464(const int chipSelect) :
 }
 
 /**
- * @brief Initialize the SPI bus.
- *
- * 4 wire data mode is enabled by default. \sa
- * https://www.arduino.cc/en/Reference/SPIBegin enable4WireModeDataTransfer()
+ * @brief Initialize the SPI bus and enable 4-wire mode data transfer.
  */
 
 void MAX1464::begin()

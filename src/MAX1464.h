@@ -26,8 +26,8 @@
  * @brief Interface to the Maxim %MAX1464 Multichannel Sensor Signal Processor,
  * Arduino SPI library version.
  *
- * This class makes use of the Arduino SPI library. Data transfer mode defaults
- * to 4-wire.
+ * This class makes use of the Arduino SPI library with 4-wire data transfer
+ * mode.
  */
 
 class MAX1464 : public AbstractMAX1464
