@@ -19,7 +19,13 @@
 #include "printhex.h"
 
 #include "MAX1464.h"
-//#include "MAX1464_SS.h" // for software SPI
+
+// for software SPI
+//#include "MAX1464_SS.h"
+//#define SPI_DATAOUT 11    // MOSI
+//#define SPI_DATAIN  12    // MISO
+//#define SPI_CLOCK   13    // SCK
+
 using namespace MAX1464_enums; // enums for register addresses, bits, etc
 
 String inputString = "";         // a string to hold incoming data
@@ -28,8 +34,10 @@ boolean writingToFlash = false;  // whether we are currently writing to MAX1464
                                  // flash memory
 unsigned long hexLinesWritten = 0; // count hex lines written during flash loop
 
-MAX1464 max1464(10);
-//MAX1464_SS max1464(10); // for software SPI
+#define SPI_SLAVESELECT 10
+
+MAX1464 max1464(SPI_SLAVESELECT);
+//MAX1464_SS max1464(SPI_SLAVESELECT); // for software SPI
 
 void printIden() {
     Serial.println("Arduino MAX1464 Serial Terminal");
@@ -40,7 +48,8 @@ void setup() {
     printIden();
     inputString.reserve(200);
 
-//    max1464.setSpiPins(11,12,13); // only for software SPI
+//    max1464.setSpiPins(
+//                SPI_DATAOUT, SPI_DATAIN, SPI_CLOCK); // only for software SPI
     max1464.begin();
 }
 
