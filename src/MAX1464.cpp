@@ -19,10 +19,13 @@
 #include "MAX1464.h"
 #include "printhex.h"
 
+using namespace MAX1464_enums;
+
 MAX1464::MAX1464(const int chipSelect) :
     AbstractMAX1464(chipSelect)
 {
     settings = SPISettings(4000000, LSBFIRST, SPI_MODE0);
+    _3wireMode = false;
 }
 
 /**
@@ -32,7 +35,7 @@ MAX1464::MAX1464(const int chipSelect) :
 void MAX1464::begin()
 {
     SPI.begin();
-    enable4WireModeDataTransfer();
+    writeNibble(IMR_4WIRE, IRSA_IMR);  // enable 4-wire mode data transfer
 }
 
 void MAX1464::end()

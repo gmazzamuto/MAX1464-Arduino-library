@@ -98,5 +98,7 @@ void MAX1464_SS::setSpiPins(
     _spi_dataout = dataout;
     _spi_clock = clock;
     if(_spi_datain == _spi_dataout)
-        enable3WireModeDataTransfer();
+        _3wireMode = true;
+    else
+        _3wireMode = false;
 }

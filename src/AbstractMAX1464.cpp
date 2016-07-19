@@ -129,25 +129,6 @@ void AbstractMAX1464::singleStepCpu() const
 //IRSA functions
 
 /**
- * @brief Enable 4-wire mode data transfer.
- */
-
-void AbstractMAX1464::enable4WireModeDataTransfer()
-{
-    writeNibble(IMR_4WIRE, IRSA_IMR);
-    _3wireMode = false;
-}
-
-/**
- * @brief Enable 3-wire mode data transfer.
- */
-
-void AbstractMAX1464::enable3WireModeDataTransfer()
-{
-    _3wireMode = true;
-}
-
-/**
  * @brief Write flash address into PFAR[11:0]
  * @param addr
  */

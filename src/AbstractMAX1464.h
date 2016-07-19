@@ -99,9 +99,6 @@ private:
 protected:
     int _chipSelect;
     boolean _3wireMode;
-
-    void enable4WireModeDataTransfer();
-    void enable3WireModeDataTransfer();
 };
 
 
