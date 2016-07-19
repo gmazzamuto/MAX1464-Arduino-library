@@ -1,5 +1,5 @@
 /*
-  Example sketch for the MAX1464 library.
+  Example sketch for the Arduino MAX1464 library.
   Copyright (C) 2016 Giacomo Mazzamuto <gmazzamuto@gmail.com>
 
   This program is free software; you can redistribute it and/or
@@ -18,6 +18,24 @@
 
 /**
  * \file
+ * \brief Example sketch for the Arduino MAX1464 library
+ *
+ * This example sketch implements a serial terminal.
+ * This is a list of the serial commands available in the example:
+ * - `IDEN` print an identification string
+ * - `RFW [N]` read firmware (partition `N`)
+ * - `HALTCPU`
+ * - `RESETCPU`
+ * - `RELEASECPU`
+ * - `RP N` read CPU port number `N` (0-15)
+ * - `STEP` single step the CPU, useful for debugging
+ * - `!ERASEFLASHMEMORY!` (both partitions)
+ * - `!WRITEFLASHMEMORY!` enter firmware flashing mode. From now on, only HEX
+ *    lines are expected from the serial port. You can then send a whole HEX
+ *    file using your terminal emulator. Normal command mode is resumed after
+ *    the last HEX line has been sent, or alternatively by issuing the
+ *    `!ABORTWRITEFLASHMEMORY!` command.
+ * - `!ABORTWRITEFLASHMEMORY!` see above
  */
 
 #include "MAX1464.h"
