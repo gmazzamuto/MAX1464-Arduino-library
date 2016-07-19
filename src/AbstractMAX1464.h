@@ -25,6 +25,10 @@
 //#define MAX1464_SERIALDEBUG
 
 /**
+ * \file
+ */
+
+/**
  * @brief The AbstractMAX1464 class provides a complete interface to the Maxim
  * %MAX1464 Multichannel Sensor Signal Processor.
  *

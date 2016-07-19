@@ -16,6 +16,10 @@
   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * \file
+ */
+
 #include "printhex.h"
 
 void printHex8(const uint8_t b)

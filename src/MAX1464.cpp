@@ -16,6 +16,10 @@
   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * \file
+ */
+
 #include "MAX1464.h"
 #include "printhex.h"
 

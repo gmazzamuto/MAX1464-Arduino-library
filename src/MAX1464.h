@@ -16,6 +16,10 @@
   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * \file
+ */
+
 #ifndef MAX1464_H
 #define MAX1464_H
 
