@@ -35,6 +35,11 @@ void MAX1464::begin()
     enable4WireModeDataTransfer();
 }
 
+void MAX1464::end()
+{
+    SPI.end();
+}
+
 void MAX1464::byteShiftOut(const uint8_t b, const char *debugMsg) const
 {
 #ifdef MAX1464_SERIALDEBUG

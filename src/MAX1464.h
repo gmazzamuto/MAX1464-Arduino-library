@@ -35,6 +35,7 @@ class MAX1464 : public AbstractMAX1464
 public:
     MAX1464(const int chipSelect);
     virtual void begin();
+    virtual void end();
 
     virtual void byteShiftOut(
             const uint8_t b, const char *debugMsg = NULL) const;

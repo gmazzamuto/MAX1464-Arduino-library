@@ -44,6 +44,7 @@ public:
      * The default implementation does nothing.
      */
     virtual void begin() {}
+    virtual void end() {}
 
     // simple CR functions
     void haltCpu() const;
