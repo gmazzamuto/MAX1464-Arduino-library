@@ -1,0 +1,14 @@
+/**
+
+    \mainpage
+
+This library implements a complete interface to the <a
+href="https://www.maximintegrated.com/en/products/analog/sensors-and-sensor-interface/MAX1464.html">Maxim
+MAX1464 Multichannel Sensor Signal Processor </a> for Arduino.
+
+Please see the <a href="md_README.html">README</a> file for an introduction to
+the library and a short tutorial.
+
+See <a
+href="MAX1464-Arduino-library_8ino_source.html">MAX1464-Arduino-library.ino</a>
+for an example sketch using the library. */
