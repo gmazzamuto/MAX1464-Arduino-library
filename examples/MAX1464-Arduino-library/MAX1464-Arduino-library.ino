@@ -91,94 +91,95 @@ void serialEvent() {
 }
 
 void loop() {
-    if (stringComplete) {
-        if(writingToFlash) {
-            if(String("!ABORTWRITEFLASHMEMORY!").equals(inputString)) {
+    if(!stringComplete)
+        return;
+
+    if(writingToFlash) {
+        if(String("!ABORTWRITEFLASHMEMORY!").equals(inputString)) {
+            writingToFlash = false;
+            Serial.println("\nAbort writing to flash memory...");
+        }
+        else if(!max1464.writeHexLineToFlashMemory(inputString)) {
+            Serial.print("\nIllegal line ");
+            Serial.println(inputString);
+        }
+        else {
+            Serial.print(".");
+            hexLinesWritten++;
+            if(hexLinesWritten>80) {
+                hexLinesWritten = 0;
+                Serial.println();
+            }
+            if(max1464.hasEOFBeenReached()) {
                 writingToFlash = false;
-                Serial.println("\nAbort writing to flash memory...");
-            }
-            else if(!max1464.writeHexLineToFlashMemory(inputString)) {
-                Serial.print("\nIllegal line ");
-                Serial.println(inputString);
-            }
-            else {
-                Serial.print(".");
-                hexLinesWritten++;
-                if(hexLinesWritten>80) {
-                    hexLinesWritten = 0;
-                    Serial.println();
-                }
-                if(max1464.hasEOFBeenReached()) {
-                    writingToFlash = false;
-                    Serial.println();
-                }
-            }
-            clearInputString();
-            return;
-        }
-
-        inputString.toUpperCase();
-        inputString = strtok((char *)inputString.c_str(), " ");
-
-        if(String("IDEN").startsWith(inputString)) {
-            printIden();
-        }
-        else if(String("RFW").startsWith(inputString)) {
-            char *partition_cp = strtok(NULL, " ");
-            uint8_t partition = 0;
-            if(partition_cp != NULL) {
-                partition = atoi(partition_cp);
-            }
-            max1464.readFlashPartition((FLASH_PARTITION)partition);
-        }
-        else if(String("HALTCPU").startsWith(inputString)) {
-            Serial.println("Halting CPU");
-            max1464.haltCpu();
-        }
-        else if(String("RESETCPU").startsWith(inputString)) {
-            Serial.println("Resetting CPU");
-            max1464.resetCpu();
-        }
-        else if(String("RP").startsWith(inputString)) {
-            char *port_cp = strtok(NULL, " ");
-            if(port_cp != NULL) {
-                uint8_t port = atoi(port_cp);
-                Serial.print("CPU port ");
-                Serial.print(port_cp);
-                Serial.print(" == ");
-                uint16_t value = max1464.readCpuPort((CPU_PORT)port);
-                Serial.print(value, HEX);
                 Serial.println();
             }
         }
-        else if(String("STEP").startsWith(inputString)) {
-            Serial.println("stepping");
-            max1464.singleStepCpu();
-        }
-        else if(String("RELEASECPU").startsWith(inputString)) {
-            Serial.println("Releasing CPU");
-            max1464.releaseCpu();
-        }
-        else if(String("!ERASEFLASHMEMORY!").equals(inputString)) {
-            Serial.println("Erasing FLASH memory");
-            max1464.eraseFlashMemory();
-        }
-        else if(String("!WRITEFLASHMEMORY!").equals(inputString)) {
-            char *partition_cp = strtok(NULL, " ");
-            uint8_t partition = 0;
-            if(partition_cp != NULL) {
-                partition = atoi(partition_cp);
-            }
-            writingToFlash = true;
-            hexLinesWritten = 0;
-            max1464.beginWritingToFlashPartition((FLASH_PARTITION)partition);
-            Serial.println("Writing to flash memory...");
-        }
-        else {
-            Serial.print("Unknown input string: ");
-            Serial.println(inputString);
-        }
-
         clearInputString();
+        return;
     }
+
+    inputString.toUpperCase();
+    inputString = strtok((char *)inputString.c_str(), " ");
+
+    if(String("IDEN").startsWith(inputString)) {
+        printIden();
+    }
+    else if(String("RFW").startsWith(inputString)) {
+        char *partition_cp = strtok(NULL, " ");
+        uint8_t partition = 0;
+        if(partition_cp != NULL) {
+            partition = atoi(partition_cp);
+        }
+        max1464.readFlashPartition((FLASH_PARTITION)partition);
+    }
+    else if(String("HALTCPU").startsWith(inputString)) {
+        Serial.println("Halting CPU");
+        max1464.haltCpu();
+    }
+    else if(String("RESETCPU").startsWith(inputString)) {
+        Serial.println("Resetting CPU");
+        max1464.resetCpu();
+    }
+    else if(String("RP").startsWith(inputString)) {
+        char *port_cp = strtok(NULL, " ");
+        if(port_cp != NULL) {
+            uint8_t port = atoi(port_cp);
+            Serial.print("CPU port ");
+            Serial.print(port_cp);
+            Serial.print(" == ");
+            uint16_t value = max1464.readCpuPort((CPU_PORT)port);
+            Serial.print(value, HEX);
+            Serial.println();
+        }
+    }
+    else if(String("STEP").startsWith(inputString)) {
+        Serial.println("stepping");
+        max1464.singleStepCpu();
+    }
+    else if(String("RELEASECPU").startsWith(inputString)) {
+        Serial.println("Releasing CPU");
+        max1464.releaseCpu();
+    }
+    else if(String("!ERASEFLASHMEMORY!").equals(inputString)) {
+        Serial.println("Erasing FLASH memory");
+        max1464.eraseFlashMemory();
+    }
+    else if(String("!WRITEFLASHMEMORY!").equals(inputString)) {
+        char *partition_cp = strtok(NULL, " ");
+        uint8_t partition = 0;
+        if(partition_cp != NULL) {
+            partition = atoi(partition_cp);
+        }
+        writingToFlash = true;
+        hexLinesWritten = 0;
+        max1464.beginWritingToFlashPartition((FLASH_PARTITION)partition);
+        Serial.println("Writing to flash memory...");
+    }
+    else {
+        Serial.print("Unknown input string: ");
+        Serial.println(inputString);
+    }
+
+    clearInputString();
 }
