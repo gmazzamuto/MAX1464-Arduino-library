@@ -73,6 +73,11 @@ void setup() {
     max1464.begin();
 }
 
+void clearInputString() {
+    inputString = "";
+    stringComplete = false;
+}
+
 void serialEvent() {
     while (Serial.available()) {
         char inChar = (char)Serial.read();
@@ -87,8 +92,6 @@ void serialEvent() {
 
 void loop() {
     if (stringComplete) {
-        inputString.toUpperCase();
-        inputString = strtok((char *)inputString.c_str(), " ");
         if(writingToFlash) {
             if(String("!ABORTWRITEFLASHMEMORY!").equals(inputString)) {
                 writingToFlash = false;
@@ -110,8 +113,14 @@ void loop() {
                     Serial.println();
                 }
             }
+            clearInputString();
+            return;
         }
-        else if(String("IDEN").startsWith(inputString)) {
+
+        inputString.toUpperCase();
+        inputString = strtok((char *)inputString.c_str(), " ");
+
+        if(String("IDEN").startsWith(inputString)) {
             printIden();
         }
         else if(String("RFW").startsWith(inputString)) {
@@ -170,8 +179,6 @@ void loop() {
             Serial.println(inputString);
         }
 
-        // clear the string:
-        inputString = "";
-        stringComplete = false;
+        clearInputString();
     }
 }
