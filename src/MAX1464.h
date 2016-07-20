@@ -23,7 +23,7 @@
 #ifndef MAX1464_H
 #define MAX1464_H
 
-#include "AbstractMAX1464.h"
+#include "lib/AbstractMAX1464.h"
 #include <SPI.h>
 
 /**

@@ -21,7 +21,7 @@
  */
 
 #include "MAX1464.h"
-#include "printhex.h"
+#include "lib/printhex.h"
 
 using namespace MAX1464_enums;
 

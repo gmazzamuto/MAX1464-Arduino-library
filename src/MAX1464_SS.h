@@ -23,7 +23,7 @@
 #ifndef MAX1464_SS_H
 #define MAX1464_SS_H
 
-#include "AbstractMAX1464.h"
+#include "lib/AbstractMAX1464.h"
 
 /**
  * @brief Interface to the Maxim %MAX1464 Multichannel Sensor Signal Processor,
