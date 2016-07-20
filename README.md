@@ -6,7 +6,8 @@ for Arduino.
 
 There are two classes provided with this library. The MAX1464 class makes use of
 Arduino's SPI library, whereas the MAX1464_SS class implements SPI in software
-on the user-specified pins.
+on the user-specified pins. See the [documentation](https://gmazzamuto.github.io/MAX1464-Arduino-library/index.html)
+for a complete reference.
 
 ## Tutorial
 
@@ -82,7 +83,8 @@ max1464.writeModuleRegister(
 max1464.writeModuleRegister(GPIO_OUT_HIGH, GPIO1_CONTROL);
 uint16_t value = max1464.readModuleRegister(GPIO1_CONTROL);
 ```
-Please refer to the documentation for a complete list of available enums.
+Please refer to the documentation for a complete list of
+[available enums](https://gmazzamuto.github.io/MAX1464-Arduino-library/namespaceMAX1464__enums.html).
 
 To write to flash memory:
 ```C++
