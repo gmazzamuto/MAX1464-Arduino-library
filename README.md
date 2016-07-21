@@ -54,7 +54,7 @@ max1464.begin();
 ```
 For software SPI:
 ```cpp
-mx1464.setSpiPins(SPI_DATAOUT, SPI_DATAIN, SPI_CLOCK); // for software SPI only
+max1464.setSpiPins(SPI_DATAOUT, SPI_DATAIN, SPI_CLOCK); // for software SPI only
 max1464.begin();
 ```
 
