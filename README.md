@@ -12,23 +12,23 @@ for a complete reference.
 ## Tutorial
 
 To use the library, include the header file:
-```C++
+```cpp
 #include <MAX1464.h>
 ```
 or
-```C++
+```cpp
 #include <MAX1464_SS.h>
 ```
 if you prefer to use software SPI.
 
 Define a macro for the slave select pin:
-```C++
+```cpp
 #define SPI_SLAVESELECT 10
 ```
 
 If you are using software SPI, you also need to define the pins for MOSI, MISO
 and SCK:
-```C++
+```cpp
 #define SPI_DATAOUT 11  // MOSI
 #define SPI_DATAIN  12  // MISO
 #define SPI_CLOCK   13  // SCK
@@ -36,24 +36,24 @@ and SCK:
 
 In case you need to use register addresses, configuration bits, etc, add this
 line to access the corresponding enums easily:
-```C++
+```cpp
 using namespace MAX1464_enums;
 ```
 
 Then, create an instance of the MAX1464 or MAX1464_SS class:
-```C++
+```cpp
 MAX1464 max1464(SPI_SLAVESELECT);
 ```
-```C++
+```cpp
 MAX1464_SS max1464(SPI_SLAVESELECT); // for software SPI
 ```
 
 In your `setup()` function, call the `begin()` method:
-```C++
+```cpp
 max1464.begin();
 ```
 For software SPI:
-```C++
+```cpp
 mx1464.setSpiPins(SPI_DATAOUT, SPI_DATAIN, SPI_CLOCK); // for software SPI only
 max1464.begin();
 ```
@@ -63,20 +63,20 @@ Now the library is initialized and you can use it in your `loop()` function.
 ## Common operations
 
 To control the CPU state:
-```C++
+```cpp
 max1464.haltCpu();
 max1464.resetCpu();
 max1464.releaseCpu();
 ```
 
 To write to and read from CPU ports:
-```C++
+```cpp
 max1464.writeCpuPort(0x1234, CPU_PORT_A);
 uint16_t value = max1464.readCpuPort(CPU_PORT_A);
 ```
 
 To write to and read from module registers:
-```C++
+```cpp
 max1464.writeModuleRegister(
             CONFIGA_PGA_00 | CONFIGA_CLK6 | CONFIGA_RES_9BIT | CONFIGA_CO0,
             R_ADC_CONFIG_1A);
@@ -87,7 +87,7 @@ Please refer to the documentation for a complete list of
 [available enums](https://gmazzamuto.github.io/MAX1464-Arduino-library/namespaceMAX1464__enums.html).
 
 To write to flash memory:
-```C++
+```cpp
 max1464.beginWritingToFlashPartition(PARTITION_0);
 max1464.writeHexLineToFlashMemory(inputString); // HEX line 1
 max1464.writeHexLineToFlashMemory(inputString); // HEX line 2
