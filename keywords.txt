@@ -36,7 +36,7 @@ resetCpu	KEYWORD2
 releaseCpu	KEYWORD2
 eraseFlashMemory	KEYWORD2
 eraseFlashPartition	KEYWORD2
-copyFlashToDhr	KEYWORD2KEYWORD2
+copyFlashToDhr	KEYWORD2
 singleStepCpu	KEYWORD2
 setFlashAddress	KEYWORD2
 writeDHR	KEYWORD2
